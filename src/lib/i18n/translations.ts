@@ -161,7 +161,8 @@ export const translations: Record<Locale, Record<string, unknown>> = {
       a6: "Oui. Nos gourdes sont en acier inoxydable et sans BPA, conformes à un usage alimentaire au quotidien.",
     },
     promo: {
-      barText: "−50 % Thermo Chrono · Livraison rapide",
+      barText: "Livraison offerte sous 2 à 4 jours ouvrés",
+      barTextMobile: "Livraison offerte 2-4 j",
     },
     boutique: {
       metaTitle: "Boutique",
@@ -364,7 +365,8 @@ export const translations: Record<Locale, Record<string, unknown>> = {
       a6: "Yes. Our bottles are made of stainless steel and are BPA-free, suitable for daily food use.",
     },
     promo: {
-      barText: "−50 % Thermo Chrono · Fast delivery",
+      barText: "Free delivery in 2 to 4 business days",
+      barTextMobile: "Free delivery 2-4 days",
     },
     boutique: {
       metaTitle: "Shop",

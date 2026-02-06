@@ -20,13 +20,13 @@ export const product: Product = {
     {
       id: "noir",
       color: "Noir",
-      price: 49.9,
+      price: 19.99,
       images: ["/images/gourde_noir.jpg", "/images/gourdeNoir.png", "/images/gourde_noir_woman.jpg"],
     },
     {
       id: "bleu",
       color: "Bleu pastel",
-      price: 49.9,
+      price: 19.99,
       images: [
         "/images/gourde bleu.png",
         "/images/gourde bleu.png",
@@ -38,7 +38,7 @@ export const product: Product = {
     {
       id: "blanc",
       color: "Blanc",
-      price: 49.9,
+      price: 19.99,
       images: ["/images/gourde bleu.png"],
     },
   ],
