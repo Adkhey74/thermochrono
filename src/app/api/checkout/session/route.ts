@@ -95,6 +95,11 @@ export async function POST(request: Request) {
       success_url: successUrl,
       cancel_url: cancelUrl,
       locale: "fr",
+      // Collecte des infos client sur la page de paiement Stripe
+      phone_number_collection: { enabled: true },
+      shipping_address_collection: {
+        allowed_countries: ["FR"],
+      },
     }
 
     if (discountAmount > 0) {
@@ -111,6 +116,62 @@ export async function POST(request: Request) {
     const session = await stripe.checkout.sessions.create(params)
 
     return NextResponse.json({ url: session.url })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Erreur Stripe"
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
+}
+
+/** Récupère les infos client d'une session Checkout (pour la page succès). */
+export async function GET(request: Request) {
+  const apiKey = process.env.STRIPE_SECRET_KEY?.trim()
+  if (!apiKey || typeof apiKey !== "string") {
+    return NextResponse.json(
+      { error: "Stripe n'est pas configuré." },
+      { status: 500 }
+    )
+  }
+
+  const { searchParams } = new URL(request.url)
+  const sessionId = searchParams.get("session_id")?.trim()
+  if (!sessionId) {
+    return NextResponse.json(
+      { error: "session_id manquant." },
+      { status: 400 }
+    )
+  }
+
+  const stripe = new Stripe(apiKey)
+  try {
+    const session = await stripe.checkout.sessions.retrieve(sessionId, {
+      expand: ["customer_details"],
+    })
+
+    if (session.payment_status !== "paid") {
+      return NextResponse.json(
+        { error: "Session non payée." },
+        { status: 400 }
+      )
+    }
+
+    const customer = session.customer_details
+    const shippingDetails = session.shipping_details
+    const shipping = shippingDetails?.address
+
+    return NextResponse.json({
+      email: customer?.email ?? null,
+      phone: customer?.phone ?? null,
+      name: customer?.name ?? shippingDetails?.name ?? null,
+      address: shipping
+        ? {
+            line1: shipping.line1 ?? null,
+            line2: shipping.line2 ?? null,
+            city: shipping.city ?? null,
+            postal_code: shipping.postal_code ?? null,
+            country: shipping.country ?? null,
+          }
+        : null,
+    })
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur Stripe"
     return NextResponse.json({ error: message }, { status: 500 })

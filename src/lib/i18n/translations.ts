@@ -137,6 +137,9 @@ export const translations: Record<Locale, Record<string, unknown>> = {
     order: {
       successTitle: "Commande confirmée",
       successMessage: "Merci ! Votre commande est enregistrée. Vous recevrez un email avec le suivi sous peu.",
+      shippingTo: "Livraison prévue à",
+      confirmationSentTo: "Un email de confirmation a été envoyé à",
+      phoneLabel: "Tél.",
       backToShop: "Retour à la boutique",
       cancelTitle: "Paiement annulé",
       cancelMessage: "Votre paiement a été annulé. Vous pouvez modifier votre panier et réessayer.",
@@ -376,6 +379,9 @@ export const translations: Record<Locale, Record<string, unknown>> = {
     order: {
       successTitle: "Order confirmed",
       successMessage: "Thank you! Your order is confirmed. You'll receive an email with tracking shortly.",
+      shippingTo: "Shipping to",
+      confirmationSentTo: "A confirmation email was sent to",
+      phoneLabel: "Phone",
       backToShop: "Back to shop",
       cancelTitle: "Payment cancelled",
       cancelMessage: "Your payment was cancelled. You can update your cart and try again.",
