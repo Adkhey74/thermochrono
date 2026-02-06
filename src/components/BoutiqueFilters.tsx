@@ -27,7 +27,7 @@ export function BoutiqueFilters({
   onFiltersChange,
 }: BoutiqueFiltersProps) {
   const { t } = useI18n()
-  const [openColor, setOpenColor] = useState(true)
+  const [openColor, setOpenColor] = useState(false)
   const [openPrice, setOpenPrice] = useState(false)
   const [openAvailability, setOpenAvailability] = useState(false)
 
