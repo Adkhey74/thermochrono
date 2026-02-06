@@ -155,7 +155,10 @@ export async function GET(request: Request) {
     }
 
     const customer = session.customer_details
-    const shippingDetails = session.shipping_details
+    const sessionWithShipping = session as Stripe.Checkout.Session & {
+      shipping_details?: { address?: Stripe.Address; name?: string | null }
+    }
+    const shippingDetails = sessionWithShipping.shipping_details
     const shipping = shippingDetails?.address
 
     return NextResponse.json({

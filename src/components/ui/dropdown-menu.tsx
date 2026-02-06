@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import { ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface DropdownMenuProps {
@@ -42,7 +41,7 @@ const DropdownMenuTrigger = React.forwardRef<
       ref,
       onClick: handleClick,
       "aria-expanded": context.open,
-    } as any)
+    } as React.ButtonHTMLAttributes<HTMLButtonElement>)
   }
 
   return (
@@ -79,7 +78,7 @@ const DropdownMenuContent = React.forwardRef<
       document.addEventListener("mousedown", handleClickOutside)
       return () => document.removeEventListener("mousedown", handleClickOutside)
     }
-  }, [context.open, ref])
+  }, [context, ref])
 
   if (!context.open) return null
 
@@ -106,8 +105,8 @@ const DropdownMenuItem = React.forwardRef<
 >(({ className, children, ...props }, ref) => {
   const context = React.useContext(DropdownMenuContext)
   
-  const handleClick = (e: React.MouseEvent) => {
-    props.onClick?.(e as any)
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    props.onClick?.(e)
     context?.setOpen(false)
   }
 

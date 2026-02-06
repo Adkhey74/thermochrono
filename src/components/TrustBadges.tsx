@@ -1,7 +1,7 @@
 "use client"
 
 import { useI18n } from "@/lib/i18n/context"
-import { Truck, Shield, RefreshCw, CreditCard } from "lucide-react"
+import { Truck, Shield, RefreshCw } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const BADGES = [

@@ -57,7 +57,6 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
         aria-labelledby={titleId}
         aria-describedby={query ? resultsCountId : undefined}
         className="max-w-2xl w-full p-0 gap-0 h-[min(520px,calc(100vh-3rem))] flex flex-col overflow-hidden relative"
-        onClick={(e) => e.stopPropagation()}
       >
         <DialogTitle id={titleId} className="sr-only">
           {t("header.searchTitle") as string}
