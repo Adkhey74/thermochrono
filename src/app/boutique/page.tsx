@@ -135,7 +135,7 @@ export default function BoutiquePage() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -4 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute right-0 top-full mt-1.5 py-1 min-w-[200px] rounded-xl border border-border bg-card shadow-lg z-10"
+                      className="absolute right-0 top-full mt-1.5 py-1 min-w-[200px] rounded-xl border border-border bg-card shadow-lg z-[var(--z-above-content)]"
                       role="listbox"
                     >
                       {(

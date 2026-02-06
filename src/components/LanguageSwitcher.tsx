@@ -61,7 +61,7 @@ export function LanguageSwitcher() {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1.5 w-44 bg-card border border-border rounded-md shadow-lg z-50 overflow-hidden">
+        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1.5 w-44 bg-card border border-border rounded-md shadow-lg z-[var(--z-dropdown)] overflow-hidden">
           <div className="p-2">
             {languages.map((lang) => (
               <button

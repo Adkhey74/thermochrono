@@ -10,6 +10,7 @@ import { ProductCard } from "@/components/ProductCard"
 import { ReviewsCarousel } from "@/components/ReviewsCarousel"
 import { FaqSection } from "@/components/FaqSection"
 import { TrustBadges } from "@/components/TrustBadges"
+import { ScrollReveal } from "@/components/ScrollReveal"
 import { product } from "@/data/products"
 
 export default function Home() {
@@ -19,19 +20,32 @@ export default function Home() {
     <main>
       {/* Hero Section - mobile: ratio 3/4, contenu allégé pour éviter le chevauchement */}
       <section className="relative aspect-[3/4] min-h-0 sm:aspect-auto sm:min-h-[90vh] flex flex-col items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/images/Acceuil.jpeg"
-            alt={t("common.heroImageAlt") as string}
-            fill
-            className="object-cover object-center scale-100 sm:scale-105 sm:animate-[scale_20s_ease-in-out_infinite_alternate]"
-            sizes="100vw"
-            priority
+        <div className="absolute inset-0 z-[var(--z-base)]">
+          <motion.div
+            className="absolute inset-0"
+            initial={{ scale: 1.1 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
+          >
+            <Image
+              src="/images/Acceuil.jpeg"
+              alt={t("common.heroImageAlt") as string}
+              fill
+              className="object-cover object-center"
+              sizes="100vw"
+              priority
+            />
+          </motion.div>
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-primary/30"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
           />
         </div>
-        <div className="absolute inset-0 bg-black/50 z-[1]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/70 z-[1]" />
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-20 lg:py-28 z-20 flex-1 flex items-center min-h-0">
+        <div className="absolute inset-0 bg-black/50 z-[var(--z-content)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/70 z-[var(--z-content)]" />
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-20 lg:py-28 z-[var(--z-above-content)] flex-1 flex items-center min-h-0">
           <div className="max-w-3xl mx-auto text-center w-full">
             <motion.span
               className="inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/15 px-3 py-1.5 text-xs sm:text-sm font-semibold text-white backdrop-blur-md mb-2 sm:mb-8 shadow-lg"
@@ -129,7 +143,7 @@ export default function Home() {
         {/* Indicateur de scroll */}
         <motion.a
           href="#featured"
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors min-h-[44px] justify-center pb-[env(safe-area-inset-bottom,0)]"
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[var(--z-above-content)] flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors min-h-[44px] justify-center pb-[env(safe-area-inset-bottom,0)]"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1 }}
@@ -148,82 +162,63 @@ export default function Home() {
       {/* Produit à la une */}
       <section id="featured" className="py-14 sm:py-20 lg:py-24 bg-background scroll-mt-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="text-center mb-14"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl font-bold tracking-tight mb-2">{t("home.featured") as string}</h2>
-            <div className="w-14 h-1 bg-primary rounded-full mx-auto mb-4" />
-            <p className="text-muted-foreground max-w-xl mx-auto">{t("home.featuredIntro") as string}</p>
-          </motion.div>
-          <motion.div
-            className="flex justify-center max-w-md mx-auto"
-            initial={{ opacity: 0, y: 32 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="w-full sm:w-[380px]">
-              <ProductCard product={product} variant={product.variants[0]} />
+          <ScrollReveal direction="up" delay={0.1}>
+            <div className="text-center mb-14">
+              <h2 className="text-3xl font-bold tracking-tight mb-2">{t("home.featured") as string}</h2>
+              <div className="w-14 h-1 bg-primary rounded-full mx-auto mb-4" />
+              <p className="text-muted-foreground max-w-xl mx-auto">{t("home.featuredIntro") as string}</p>
             </div>
-          </motion.div>
-          <motion.p
-            className="text-center mt-12"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-          >
-            <Link
-              href="/boutique"
-              className="inline-flex items-center gap-2 text-primary font-semibold hover:underline underline-offset-4 transition-colors duration-200"
-            >
-              {t("home.viewShop") as string}
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </motion.p>
+          </ScrollReveal>
+          <ScrollReveal direction="up" delay={0.2}>
+            <div className="flex justify-center max-w-md mx-auto">
+              <div className="w-full sm:w-[380px]">
+                <ProductCard product={product} variant={product.variants[0]} />
+              </div>
+            </div>
+          </ScrollReveal>
+          <ScrollReveal direction="fade" delay={0.3}>
+            <p className="text-center mt-12">
+              <Link
+                href="/boutique"
+                className="inline-flex items-center gap-2 text-primary font-semibold hover:underline underline-offset-4 transition-colors duration-200"
+              >
+                {t("home.viewShop") as string}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </p>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* Description */}
       <section className="py-14 sm:py-20 lg:py-24 bg-muted">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="max-w-3xl mx-auto text-center mb-12"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl font-bold tracking-tight mb-2">{t("home.aboutTitle") as string}</h2>
-            <div className="w-14 h-1 bg-primary rounded-full mx-auto" />
-          </motion.div>
-          <motion.div
-            className="max-w-4xl mx-auto rounded-2xl border border-border bg-card p-8 lg:p-12 shadow-sm"
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-          >
-            <div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
-              <p>{t("home.description1") as string}</p>
-              <p>{t("home.description2") as string}</p>
+          <ScrollReveal direction="up" delay={0.1}>
+            <div className="max-w-3xl mx-auto text-center mb-12">
+              <h2 className="text-3xl font-bold tracking-tight mb-2">{t("home.aboutTitle") as string}</h2>
+              <div className="w-14 h-1 bg-primary rounded-full mx-auto" />
             </div>
-          </motion.div>
+          </ScrollReveal>
+          <ScrollReveal direction="up" delay={0.2}>
+            <div className="max-w-4xl mx-auto rounded-2xl border border-border bg-card p-8 lg:p-12 shadow-sm">
+              <div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
+                <p>{t("home.description1") as string}</p>
+                <p>{t("home.description2") as string}</p>
+              </div>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
       {/* Avantages - 3 icônes avec style accent */}
       <section className="py-14 sm:py-20 lg:py-24 bg-background">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="text-center mb-14"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl font-bold tracking-tight mb-2">{t("home.whyUs") as string}</h2>
-            <div className="w-14 h-1 bg-primary rounded-full mx-auto" />
-          </motion.div>
+          <ScrollReveal direction="up" delay={0.1}>
+            <div className="text-center mb-14">
+              <h2 className="text-3xl font-bold tracking-tight mb-2">{t("home.whyUs") as string}</h2>
+              <div className="w-14 h-1 bg-primary rounded-full mx-auto" />
+            </div>
+          </ScrollReveal>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10 max-w-5xl mx-auto">
             {[
               { icon: Package, text: t("home.carefulProducts") as string },
@@ -232,35 +227,29 @@ export default function Home() {
             ].map((item, index) => {
               const Icon = item.icon
               return (
-                <motion.div
-                  key={index}
-                  className="text-center rounded-2xl border border-border bg-card p-8 shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/20"
-                  initial={{ opacity: 0, y: 28 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  whileHover={{ y: -6 }}
-                >
+                <ScrollReveal key={index} direction="up" delay={0.1 + index * 0.1}>
                   <motion.div
-                    className="bg-primary/10 rounded-2xl w-16 h-16 flex items-center justify-center mx-auto mb-5 border border-primary/20"
-                    whileHover={{ scale: 1.08 }}
-                    transition={{ type: "spring", stiffness: 300 }}
+                    className="text-center rounded-2xl border border-border bg-card p-8 shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/20"
+                    whileHover={{ y: -6 }}
                   >
-                    <Icon className="h-8 w-8 text-primary" />
+                    <motion.div
+                      className="bg-primary/10 rounded-2xl w-16 h-16 flex items-center justify-center mx-auto mb-5 border border-primary/20"
+                      whileHover={{ scale: 1.08 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <Icon className="h-8 w-8 text-primary" />
+                    </motion.div>
+                    <h3 className="font-bold text-lg text-foreground">{item.text}</h3>
                   </motion.div>
-                  <h3 className="font-bold text-lg text-foreground">{item.text}</h3>
-                </motion.div>
+                </ScrollReveal>
               )
             })}
           </div>
-          <motion.div
-            className="mt-14 max-w-3xl mx-auto"
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <TrustBadges variant="row" />
-          </motion.div>
+          <ScrollReveal direction="fade" delay={0.4}>
+            <div className="mt-14 max-w-3xl mx-auto">
+              <TrustBadges variant="row" />
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -281,45 +270,35 @@ export default function Home() {
       {/* Autres couleurs */}
       <section className="py-14 sm:py-20 lg:py-24 bg-muted">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="text-center mb-12"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl font-bold tracking-tight mb-2">{t("home.similarProducts") as string}</h2>
-            <div className="w-14 h-1 bg-primary rounded-full mx-auto mb-4" />
-            <p className="text-muted-foreground max-w-md mx-auto">
-              {product.variants.length} couleurs disponibles
-            </p>
-          </motion.div>
-          <motion.div
-            className="flex flex-wrap justify-center gap-6"
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.5 }}
-          >
-            {product.variants.map((v) => (
-              <div key={v.id} className="w-full sm:w-[280px] lg:w-[260px]">
-                <ProductCard product={product} variant={v} />
-              </div>
+          <ScrollReveal direction="up" delay={0.1}>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold tracking-tight mb-2">{t("home.similarProducts") as string}</h2>
+              <div className="w-14 h-1 bg-primary rounded-full mx-auto mb-4" />
+              <p className="text-muted-foreground max-w-md mx-auto">
+                {product.variants.length} couleurs disponibles
+              </p>
+            </div>
+          </ScrollReveal>
+          <div className="flex flex-wrap justify-center gap-6">
+            {product.variants.map((v, index) => (
+              <ScrollReveal key={v.id} direction="up" delay={0.15 + index * 0.05}>
+                <div className="w-full sm:w-[280px] lg:w-[260px]">
+                  <ProductCard product={product} variant={v} />
+                </div>
+              </ScrollReveal>
             ))}
-          </motion.div>
-          <motion.p
-            className="text-center mt-12"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-          >
-            <Link
-              href="/boutique"
-              className="inline-flex items-center gap-2 text-primary font-semibold hover:underline underline-offset-4 transition-colors duration-200"
-            >
-              {t("home.viewShop") as string}
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </motion.p>
+          </div>
+          <ScrollReveal direction="fade" delay={0.3}>
+            <p className="text-center mt-12">
+              <Link
+                href="/boutique"
+                className="inline-flex items-center gap-2 text-primary font-semibold hover:underline underline-offset-4 transition-colors duration-200"
+              >
+                {t("home.viewShop") as string}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </p>
+          </ScrollReveal>
         </div>
       </section>
     </main>

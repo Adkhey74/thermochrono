@@ -110,7 +110,7 @@ export function ReviewsCarousel() {
             <button
               type="button"
               onClick={scrollPrev}
-              className="pointer-events-auto min-h-[44px] min-w-[44px] sm:h-11 sm:w-11 rounded-full bg-background/95 border border-border shadow-md flex items-center justify-center text-foreground hover:bg-muted active:scale-95 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 z-10 -ml-2 sm:ml-0"
+              className="pointer-events-auto min-h-[44px] min-w-[44px] sm:h-11 sm:w-11 rounded-full bg-background/95 border border-border shadow-md flex items-center justify-center text-foreground hover:bg-muted active:scale-95 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 z-[var(--z-above-content)] -ml-2 sm:ml-0"
               aria-label={t("reviews.prev") as string}
             >
               <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -118,7 +118,7 @@ export function ReviewsCarousel() {
             <button
               type="button"
               onClick={scrollNext}
-              className="pointer-events-auto min-h-[44px] min-w-[44px] sm:h-11 sm:w-11 rounded-full bg-background/95 border border-border shadow-md flex items-center justify-center text-foreground hover:bg-muted active:scale-95 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 z-10 -mr-2 sm:mr-0"
+              className="pointer-events-auto min-h-[44px] min-w-[44px] sm:h-11 sm:w-11 rounded-full bg-background/95 border border-border shadow-md flex items-center justify-center text-foreground hover:bg-muted active:scale-95 transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 z-[var(--z-above-content)] -mr-2 sm:mr-0"
               aria-label={t("reviews.next") as string}
             >
               <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />

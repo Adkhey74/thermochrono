@@ -46,7 +46,7 @@ function CheckoutReturnContent() {
     return (
       <div className="min-h-screen bg-muted/30 flex items-center justify-center px-4">
         <div className="max-w-md w-full rounded-2xl border border-border bg-card p-8 text-center">
-          <h1 className="text-2xl font-bold mb-2 text-green-600 dark:text-green-500">
+          <h1 className="text-2xl font-bold mb-2 text-green-600">
             {t("order.successTitle") as string}
           </h1>
           <p className="text-muted-foreground mb-8">{t("order.successMessage") as string}</p>

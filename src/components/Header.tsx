@@ -9,6 +9,7 @@ import { Menu, X, ShoppingBag } from "lucide-react"
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { LanguageSwitcher } from "@/components/LanguageSwitcher"
+import { ProductSearch } from "@/components/ProductSearch"
 import { useI18n } from "@/lib/i18n/context"
 import { useCartStore } from "@/store/cart-store"
 import { cn } from "@/lib/utils"
@@ -38,7 +39,7 @@ export function Header() {
   }, [])
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background backdrop-blur-md supports-[backdrop-filter]:bg-background/95 shadow-sm">
+    <header className="sticky top-0 z-[var(--z-header)] w-full border-b border-border bg-background backdrop-blur-md supports-[backdrop-filter]:bg-background/95 shadow-sm">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 sm:h-20 items-center justify-between">
           <div>
@@ -132,6 +133,7 @@ export function Header() {
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
+            <ProductSearch />
             <Link href="/panier" className="relative flex items-center justify-center min-h-[44px] min-w-[44px]">
               <Button variant="ghost" size="icon" className="relative h-11 w-11 touch-manipulation">
                 <ShoppingBag className="h-5 w-5" />
@@ -150,6 +152,7 @@ export function Header() {
           </div>
 
           <div className="lg:hidden flex items-center gap-1">
+            <ProductSearch />
             <Link href="/panier" className="relative flex items-center justify-center min-h-[44px] min-w-[44px]">
               <Button variant="ghost" size="icon" className="relative h-11 w-11 touch-manipulation">
                 <ShoppingBag className="h-5 w-5" />

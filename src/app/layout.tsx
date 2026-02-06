@@ -5,6 +5,7 @@ import { PromoBar } from "@/components/PromoBar";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { I18nProvider } from "@/lib/i18n/context";
+import { PageTransition } from "@/components/PageTransition";
 import { Toaster } from "sonner";
 import { StructuredData } from "@/components/StructuredData";
 
@@ -76,7 +77,9 @@ export default function RootLayout({
         <I18nProvider>
           <PromoBar />
           <Header />
-          {children}
+          <PageTransition>
+            {children}
+          </PageTransition>
           <Footer />
           <Toaster
             position="top-center"

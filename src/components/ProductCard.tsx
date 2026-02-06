@@ -24,7 +24,7 @@ export function ProductCard({ product, variant: variantProp, className }: Produc
   const href = product?.slug ? `/produit/${product.slug}` : "/boutique"
 
   return (
-    <Card className={cn("group overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm transition-all duration-300 ease-out hover:shadow-md hover:border-border pt-0", className)}>
+    <Card className={cn("group overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm transition-all duration-300 ease-out hover:shadow-xl hover:border-primary/30 hover:-translate-y-1 pt-0", className)}>
       <Link href={href} className="block">
         <div className="relative aspect-[3/4] overflow-hidden rounded-t-2xl bg-card flex items-center justify-center">
           {imageSrc ? (
@@ -33,7 +33,7 @@ export function ProductCard({ product, variant: variantProp, className }: Produc
                 src={imageSrc}
                 alt={display.name}
                 fill
-                className="object-contain object-center p-6 sm:p-8 transition-transform duration-300 ease-out group-hover:scale-[1.02]"
+                className="object-contain object-center p-6 sm:p-8 transition-transform duration-500 ease-out group-hover:scale-110"
                 sizes="(max-width: 768px) 100vw, 320px"
               />
               {imageSrcHover && (
@@ -41,11 +41,12 @@ export function ProductCard({ product, variant: variantProp, className }: Produc
                   src={imageSrcHover}
                   alt=""
                   fill
-                  className="object-contain object-center p-6 sm:p-8 transition-all duration-300 ease-out opacity-0 group-hover:opacity-100 group-hover:scale-[1.02] absolute inset-0"
+                  className="object-contain object-center p-6 sm:p-8 transition-all duration-500 ease-out opacity-0 group-hover:opacity-100 group-hover:scale-110 absolute inset-0"
                   sizes="(max-width: 768px) 100vw, 320px"
                   aria-hidden
                 />
               )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/0 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </>
           ) : (
             <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm" aria-hidden>
@@ -54,11 +55,11 @@ export function ProductCard({ product, variant: variantProp, className }: Produc
           )}
         </div>
         <CardHeader className="pb-2 transition-colors duration-200 group-hover:text-foreground">
-          <h3 className="font-semibold leading-tight line-clamp-2">{display.name}</h3>
+          <h3 className="font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200">{display.name}</h3>
           <p className="text-lg font-semibold text-primary">{variant.price.toFixed(2)} €</p>
         </CardHeader>
         <CardContent className="pt-0">
-          <Button className="w-full min-h-[48px] touch-manipulation transition-all duration-200 hover:bg-primary/90 active:scale-[0.98]">
+          <Button className="w-full min-h-[48px] touch-manipulation transition-all duration-200 hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98] shadow-sm group-hover:shadow-md">
             {t("home.viewProduct") as string}
           </Button>
         </CardContent>

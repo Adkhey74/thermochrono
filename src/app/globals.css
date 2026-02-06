@@ -2,8 +2,6 @@
 @import "tw-animate-css";
 @import "flag-icons/css/flag-icons.min.css";
 
-@custom-variant dark (&:is(.dark *));
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -46,6 +44,18 @@
 
 :root {
   --radius: 0.75rem;
+  /* Échelle z-index (ne pas dépasser 101 pour ne pas concurrencer la modale de recherche) :
+   * 0 base, 1 contenu/overlays page, 10 au-dessus du contenu (dropdowns in-page, carousel),
+   * 40 CTA fixes (WhatsApp, ContactBar) sous le header, 50 header (barre de recherche),
+   * 55 dropdowns du header (langue, menu), 100 fond modale, 101 contenu modale. */
+  --z-base: 0;
+  --z-content: 1;
+  --z-above-content: 10;
+  --z-fixed-cta: 40;
+  --z-header: 50;
+  --z-dropdown: 55;
+  --z-modal-backdrop: 100;
+  --z-modal: 101;
   /* Premium palette noir/blanc */
   --primary: #000000;
   --primary-foreground: #FFFFFF;
@@ -79,42 +89,6 @@
   --sidebar-accent-foreground: #000000;
   --sidebar-border: #E5E5E5;
   --sidebar-ring: #000000;
-}
-
-.dark {
-  /* Dark mode premium - inversion noir/blanc */
-  --background: #000000;
-  --foreground: #FFFFFF;
-  --card: #1A1A1A;
-  --card-foreground: #FFFFFF;
-  --popover: #1A1A1A;
-  --popover-foreground: #FFFFFF;
-  --primary: #FFFFFF;
-  --primary-foreground: #000000;
-  --secondary: #2A2A2A;
-  --secondary-foreground: #FFFFFF;
-  --muted: #2A2A2A;
-  --muted-foreground: #9CA3AF;
-  --accent: #2A2A2A;
-  --accent-foreground: #FFFFFF;
-  --destructive: #EF4444;
-  --destructive-foreground: #FFFFFF;
-  --border: #2A2A2A;
-  --input: #1A1A1A;
-  --ring: #FFFFFF;
-  --chart-1: #FFFFFF;
-  --chart-2: #2A2A2A;
-  --chart-3: #6B7280;
-  --chart-4: #1A1A1A;
-  --chart-5: #000000;
-  --sidebar: #000000;
-  --sidebar-foreground: #FFFFFF;
-  --sidebar-primary: #FFFFFF;
-  --sidebar-primary-foreground: #000000;
-  --sidebar-accent: #2A2A2A;
-  --sidebar-accent-foreground: #FFFFFF;
-  --sidebar-border: #2A2A2A;
-  --sidebar-ring: #FFFFFF;
 }
 
 @layer base {
@@ -203,6 +177,53 @@
     animation: marquee 40s linear infinite;
   }
 
+  /* Gradient animé */
+  @keyframes gradient-shift {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease infinite;
+  }
+
+  /* Pulse doux */
+  @keyframes pulse-soft {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+  .animate-pulse-soft {
+    animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Shimmer effect */
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+  .animate-shimmer {
+    background: linear-gradient(
+      to right,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 100%
+    );
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite;
+  }
+
   /* Animations pour le modal */
   @keyframes fadeIn {
     from {
@@ -228,11 +249,11 @@
   @keyframes modalFadeIn {
     from {
       opacity: 0;
-      transform: translate(-50%, -50%) scale(0.9);
+      transform: scale(0.96);
     }
     to {
       opacity: 1;
-      transform: translate(-50%, -50%) scale(1);
+      transform: scale(1);
     }
   }
 }

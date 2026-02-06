@@ -172,10 +172,13 @@ export default function CartPage() {
                     <div className="min-w-0 flex-1 flex flex-col justify-between">
                       <div>
                         <h2 className="font-semibold text-lg">{displayName}</h2>
-                        <p className="mt-2 text-sm text-muted-foreground">
-                          {v.price.toFixed(2)} € × {item.quantity} ={" "}
-                          <span className="font-semibold text-foreground">
-                            {(v.price * item.quantity).toFixed(2)} €
+                        <p className="mt-2 text-muted-foreground" aria-label={`${t("cart.unitPriceQuantity") as string} : ${v.price.toFixed(2)} € × ${item.quantity} = ${(v.price * item.quantity).toFixed(2)} €`}>
+                          <span className="block text-xs text-muted-foreground/80 mb-0.5">{t("cart.unitPriceQuantity") as string}</span>
+                          <span className="text-sm">
+                            {v.price.toFixed(2)} € × {item.quantity} ={" "}
+                            <span className="font-semibold text-foreground">
+                              {(v.price * item.quantity).toFixed(2)} €
+                            </span>
                           </span>
                         </p>
                       </div>
@@ -220,11 +223,11 @@ export default function CartPage() {
 
               <div className="space-y-2">
                 <p className="flex justify-between text-muted-foreground">
-                  <span>{t("cart.items") as string} ({totalItems()})</span>
+                  <span>{appliedPromo ? (t("cart.subtotal") as string) : `${t("cart.items") as string} (${totalItems()})`}</span>
                   <span>{subtotal.toFixed(2)} €</span>
                 </p>
                 {appliedPromo && (
-                  <p className="flex justify-between text-green-600 dark:text-green-500 text-sm">
+                  <p className="flex justify-between text-green-600 text-sm">
                     <span>{t("cart.discount") as string} ({appliedPromo.code})</span>
                     <span>−{discount.toFixed(2)} €</span>
                   </p>
@@ -235,56 +238,59 @@ export default function CartPage() {
                 </p>
               </div>
 
-              <div className="space-y-2">
-                <label htmlFor="promo-code" className="text-sm font-medium flex items-center gap-2">
-                  <Tag className="h-4 w-4 text-muted-foreground" />
+              <div className="rounded-xl border border-border bg-muted/30 p-4 space-y-3" role="group" aria-labelledby="promo-heading">
+                <p id="promo-heading" className="text-sm font-medium flex items-center gap-2">
+                  <Tag className="h-4 w-4 text-muted-foreground" aria-hidden />
                   {t("cart.promoCode") as string}
-                </label>
+                </p>
                 {appliedPromo ? (
-                  <div className="flex items-center justify-between gap-2 rounded-lg border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/30 px-3 py-2 text-sm">
-                    <span className="font-medium text-green-700 dark:text-green-400">
+                  <div className="flex items-center justify-between gap-2 rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm">
+                    <span className="font-medium text-green-700">
                       {appliedPromo.code} {appliedPromo.label && `— ${appliedPromo.label}`}
                     </span>
                     <button
                       type="button"
                       onClick={handleRemovePromo}
-                      className="text-green-600 dark:text-green-400 hover:underline font-medium"
+                      className="text-green-600 hover:underline font-medium"
                     >
                       {t("cart.removePromo") as string}
                     </button>
                   </div>
                 ) : (
-                  <div className="flex gap-2">
-                    <Input
-                      id="promo-code"
-                      type="text"
-                      placeholder={t("cart.promoPlaceholder") as string}
-                      value={promoInput}
-                      onChange={(e) => {
-                        setPromoInput(e.target.value)
-                        setPromoError(null)
-                      }}
-                      onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleApplyPromo())}
-                      className="flex-1 h-10 uppercase"
-                      aria-invalid={!!promoError}
-                      aria-describedby={promoError ? "promo-error" : undefined}
-                    />
-                    <Button type="button" variant="secondary" onClick={handleApplyPromo} className="shrink-0 h-10 px-4">
-                      {t("cart.promoApply") as string}
-                    </Button>
-                  </div>
-                )}
-                {promoError && (
-                  <p id="promo-error" className="text-sm text-destructive" role="alert">
-                    {promoError}
-                  </p>
-                )}
-                {checkoutError && (
-                  <p className="text-sm text-destructive" role="alert">
-                    {checkoutError}
-                  </p>
+                  <>
+                    <div className="flex gap-2">
+                      <Input
+                        id="promo-code"
+                        type="text"
+                        placeholder={t("cart.promoPlaceholder") as string}
+                        aria-label={t("cart.promoCode") as string}
+                        value={promoInput}
+                        onChange={(e) => {
+                          setPromoInput(e.target.value)
+                          setPromoError(null)
+                        }}
+                        onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleApplyPromo())}
+                        className="flex-1 h-10 uppercase"
+                        aria-invalid={!!promoError}
+                        aria-describedby={promoError ? "promo-error" : undefined}
+                      />
+                      <Button type="button" variant="secondary" onClick={handleApplyPromo} className="shrink-0 h-10 px-4">
+                        {t("cart.promoApply") as string}
+                      </Button>
+                    </div>
+                    {promoError && (
+                      <p id="promo-error" className="text-sm text-destructive" role="alert">
+                        {promoError}
+                      </p>
+                    )}
+                  </>
                 )}
               </div>
+              {checkoutError && (
+                <p className="text-sm text-destructive" role="alert">
+                  {checkoutError}
+                </p>
+              )}
 
               <Button
                 className="w-full min-h-[48px] touch-manipulation"
@@ -319,9 +325,9 @@ export default function CartPage() {
         {suggested.length > 0 && (
           <section className="mt-12 sm:mt-16 pt-10 sm:pt-12 border-t border-border/60">
             <h2 className="text-lg font-semibold mb-6">{t("cart.youMightLike") as string}</h2>
-            <div className="flex flex-wrap justify-center gap-6">
+            <div className="flex gap-4 overflow-x-auto overflow-y-hidden pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 sm:flex-wrap sm:justify-center sm:overflow-visible">
               {suggested.map((v) => (
-                <div key={v.id} className="w-full sm:w-[280px] lg:w-[260px]">
+                <div key={v.id} className="min-w-[calc(50%-0.5rem)] sm:min-w-0 w-full sm:w-[280px] lg:w-[260px] flex-shrink-0 sm:flex-shrink">
                   <ProductCard product={product} variant={v} />
                 </div>
               ))}
