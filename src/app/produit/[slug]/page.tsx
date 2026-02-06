@@ -54,8 +54,8 @@ export default function ProductPage({ params }: PageProps) {
         {/* Bloc principal : galerie + infos (2 colonnes) */}
         <div className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden">
           <div className="grid gap-0 lg:grid-cols-2">
-            {/* Colonne gauche : galerie */}
-            <div className="p-4 sm:p-6 lg:p-8 lg:sticky lg:top-24 bg-zinc-50/80 order-2 lg:order-1">
+            {/* Colonne gauche : galerie (en premier sur mobile) */}
+            <div className="p-4 sm:p-6 lg:p-8 lg:sticky lg:top-24 bg-zinc-50/80 order-1">
               <ProductGallery
                 images={selectedVariant.images}
                 productName={display.name}
@@ -63,8 +63,8 @@ export default function ProductPage({ params }: PageProps) {
               />
             </div>
 
-            {/* Colonne droite : titre, prix, couleur, CTA, réassurance */}
-            <div className="flex flex-col p-4 sm:p-6 lg:p-8 lg:pl-10 min-w-0 order-1 lg:order-2">
+            {/* Colonne droite : titre, prix, couleur, CTA, réassurance (après la galerie sur mobile) */}
+            <div className="flex flex-col p-4 sm:p-6 lg:p-8 lg:pl-10 min-w-0 order-2">
               <section className="pb-6 lg:pb-8">
                 <span className="text-xs font-semibold uppercase tracking-widest text-primary/80 mb-3 block">
                   {t("product.badgeBrand") as string}
