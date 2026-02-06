@@ -1,0 +1,30 @@
+export interface ProductVariant {
+  id: string
+  color: string
+  images: string[]
+  price: number
+}
+
+export interface Product {
+  id: string
+  name: string
+  slug: string
+  description: string
+  shortDescription: string
+  variants: ProductVariant[]
+  features: string[]
+  inStock: boolean
+}
+
+/** Pour l’affichage (panier, toast, etc.) : produit + variante résolue */
+export interface CartItemDisplay {
+  product: Product
+  variant: ProductVariant
+  quantity: number
+}
+
+export interface CartItem {
+  productId: string
+  variantId: string
+  quantity: number
+}

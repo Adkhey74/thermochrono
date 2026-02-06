@@ -1,0 +1,53 @@
+{
+  "name": "boutique-ecommerce",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "db:generate": "npx --yes prisma@5.19.1 generate",
+    "db:migrate": "npx --yes prisma@5.19.1 migrate dev",
+    "db:studio": "npx --yes prisma@5.19.1 studio",
+    "db:push": "npx --yes prisma@5.19.1 db push",
+    "db:seed": "npx --yes prisma@5.19.1 db seed"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.19.1",
+    "@radix-ui/react-navigation-menu": "^1.2.14",
+    "@radix-ui/react-separator": "^1.1.7",
+    "@radix-ui/react-slot": "^1.2.3",
+    "@stripe/react-stripe-js": "^2.9.0",
+    "@stripe/stripe-js": "^4.10.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "flag-icons": "^7.5.0",
+    "framer-motion": "^12.23.26",
+    "lucide-react": "^0.544.0",
+    "next": "^15.5.9",
+    "next-intl": "^4.6.1",
+    "prisma": "^5.19.1",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-google-recaptcha": "^3.1.0",
+    "react-icons": "^5.5.0",
+    "sonner": "^2.0.7",
+    "stripe": "^20.3.0",
+    "tailwind-merge": "^3.3.1",
+    "zustand": "^5.0.11"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/react-google-recaptcha": "^2.1.9",
+    "eslint": "^9",
+    "eslint-config-next": "^15.5.9",
+    "tailwindcss": "^4",
+    "tw-animate-css": "^1.3.8",
+    "typescript": "^5"
+  }
+}

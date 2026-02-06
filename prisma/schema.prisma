@@ -1,0 +1,117 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modèle pour les clients
+model Client {
+  id        String   @id @default(uuid())
+  firstName String
+  lastName  String
+  email     String   @unique
+  phone     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reservations Reservation[]
+
+  @@map("clients")
+}
+
+// Modèle pour les véhicules
+model Vehicle {
+  id          String   @id @default(uuid())
+  name        String   // Ex: "Mercedes V-Class"
+  type        String   // Ex: "Berline", "SUV", "Van"
+  capacity    Int      // Nombre de passagers
+  description String?
+  isAvailable Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  reservations Reservation[]
+
+  @@map("vehicles")
+}
+
+// Modèle pour les chauffeurs (optionnel)
+model Driver {
+  id        String   @id @default(uuid())
+  firstName String
+  lastName  String
+  phone     String
+  email     String?  @unique
+  license   String   // Numéro de permis
+  isAvailable Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reservations Reservation[]
+
+  @@map("drivers")
+}
+
+// Modèle principal pour les réservations
+model Reservation {
+  id            String   @id @default(uuid())
+  
+  // Informations client
+  clientId      String
+  client        Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  
+  // Informations véhicule
+  vehicleId     String?
+  vehicle       Vehicle? @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+  
+  // Informations chauffeur (optionnel)
+  driverId      String?
+  driver        Driver?  @relation(fields: [driverId], references: [id], onDelete: SetNull)
+  
+  // Détails de la réservation
+  serviceType   String   // "aeroport", "ville", "longue-distance", "evenement", "express", "forfait"
+  pickupAddress String
+  dropoffAddress String
+  pickupDate    DateTime
+  pickupTime    String   // Format HH:mm
+  passengers    Int      @default(1)
+  luggage       Int      @default(0)
+  
+  // Informations supplémentaires
+  flightNumber  String?  // Pour les transferts aéroport
+  notes         String?  // Notes spéciales du client
+  
+  // Statut de la réservation
+  status        ReservationStatus @default(PENDING)
+  
+  // Tarification
+  estimatedPrice Decimal? // Prix estimé en euros
+  finalPrice     Decimal? // Prix final en euros
+  
+  // Métadonnées
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  confirmedAt   DateTime?
+  completedAt   DateTime?
+
+  @@map("reservations")
+  @@index([clientId])
+  @@index([pickupDate])
+  @@index([status])
+}
+
+// Enum pour le statut de la réservation
+enum ReservationStatus {
+  PENDING      // En attente de confirmation
+  CONFIRMED     // Confirmée
+  IN_PROGRESS  // En cours
+  COMPLETED    // Terminée
+  CANCELLED    // Annulée
+}
+
