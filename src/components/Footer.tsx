@@ -15,6 +15,9 @@ export function Footer() {
             <p className="text-primary-foreground/80 text-sm leading-relaxed">
               {t("footer.description") as string}
             </p>
+            <p className="text-primary-foreground/90 text-sm font-medium">
+              {t("trust.guaranteeShort") as string}
+            </p>
             <a href="mailto:contact@boutique.fr" className="inline-flex items-center gap-2 bg-primary-foreground/10 hover:bg-primary-foreground/20 p-3 rounded-lg transition-all duration-200 border border-primary-foreground/20">
               <Mail className="h-4 w-4 text-primary-foreground" />
               <span className="text-sm text-primary-foreground">contact@boutique.fr</span>

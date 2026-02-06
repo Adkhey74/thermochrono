@@ -14,6 +14,8 @@ export interface Product {
   variants: ProductVariant[]
   features: string[]
   inStock: boolean
+  /** URL optionnelle d'une vidéo "produit en action" */
+  videoUrl?: string | null
 }
 
 /** Pour l’affichage (panier, toast, etc.) : produit + variante résolue */

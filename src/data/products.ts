@@ -44,6 +44,7 @@ export const product: Product = {
   ],
   features,
   inStock: true,
+  videoUrl: undefined, // À remplir avec une URL de vidéo (produit en action) si besoin
 }
 
 export function getProductBySlug(slug: string): Product | undefined {

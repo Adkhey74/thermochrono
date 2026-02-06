@@ -37,11 +37,6 @@ export function ProductActions({ product, variant }: ProductActionsProps) {
           </Link>
         </Button>
       </div>
-      <p className="text-xs text-muted-foreground flex items-center justify-center gap-4 flex-wrap">
-        <span>{t("trust.fastDelivery") as string}</span>
-        <span>·</span>
-        <span>{t("trust.securePayment") as string}</span>
-      </p>
     </div>
   )
 }

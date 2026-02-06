@@ -47,40 +47,30 @@
 :root {
   --radius: 0.75rem;
   /* Premium palette noir/blanc */
-  /* Noir premium (couleur principale) */
   --primary: #000000;
   --primary-foreground: #FFFFFF;
-  /* Accent gris foncé */
   --accent: #1A1A1A;
   --accent-foreground: #FFFFFF;
-  /* Blanc pur (fond principal) */
   --background: #FFFFFF;
   --card: #FFFFFF;
   --popover: #FFFFFF;
-  /* Gris très clair (fonds secondaires) */
   --muted: #FAFAFA;
   --secondary: #FAFAFA;
-  /* Noir (texte principal) */
   --foreground: #000000;
   --card-foreground: #000000;
   --popover-foreground: #000000;
-  /* Gris texte secondaire */
   --muted-foreground: #6B7280;
   --secondary-foreground: #000000;
-  /* Bordures */
   --border: #E5E5E5;
   --input: #FFFFFF;
   --ring: #000000;
-  /* Destructive */
   --destructive: #DC2626;
   --destructive-foreground: #FFFFFF;
-  /* Charts */
   --chart-1: #000000;
   --chart-2: #1A1A1A;
   --chart-3: #6B7280;
   --chart-4: #E5E5E5;
   --chart-5: #FAFAFA;
-  /* Sidebar */
   --sidebar: #FFFFFF;
   --sidebar-foreground: #000000;
   --sidebar-primary: #000000;
@@ -178,12 +168,24 @@
     @apply bg-muted-foreground/50;
   }
 
-  /* Toast (sonner) : forcer le centrage en haut */
-  [data-sonner-toaster][data-x-position="center"],
-  .toaster-top-center[data-sonner-toaster] {
+  /* Toast (sonner) : forcer le conteneur en haut au centre (tous viewports) */
+  [data-sonner-toaster] {
     left: 50% !important;
-    transform: translateX(-50%) !important;
     right: auto !important;
+    transform: translateX(-50%) !important;
+    width: var(--width, 356px) !important;
+    max-width: calc(100vw - 2rem);
+  }
+}
+
+@media (max-width: 600px) {
+  [data-sonner-toaster] {
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: calc(100vw - 2rem) !important;
+    max-width: calc(100vw - 2rem);
+    padding: 0;
   }
 }
 

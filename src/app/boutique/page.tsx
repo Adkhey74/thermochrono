@@ -4,7 +4,8 @@ import { useMemo, useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import { useI18n } from "@/lib/i18n/context"
 import { getCatalogItems } from "@/data/products"
-import { ChevronRight, Truck, Shield, ChevronDown } from "lucide-react"
+import { ChevronRight, ChevronDown } from "lucide-react"
+import { TrustBadges } from "@/components/TrustBadges"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
 import { ProductCard } from "@/components/ProductCard"
@@ -194,24 +195,13 @@ export default function BoutiquePage() {
 
       </div>
 
-      {/* Réassurance — pleine largeur, contenu centré, marges resserrées */}
+      {/* Badges de réassurance */}
       <section
         className="w-full mt-6 sm:mt-10 pt-4 sm:pt-6 pb-4 sm:pb-5 border-t border-border/80 bg-background"
         aria-label="Engagements"
       >
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-center gap-8 sm:gap-14 text-muted-foreground text-sm font-medium">
-          <span className="flex items-center gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <Truck className="h-5 w-5" />
-            </span>
-            <span>{t("trust.fastDelivery") as string}</span>
-          </span>
-          <span className="flex items-center gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <Shield className="h-5 w-5" />
-            </span>
-            <span>{t("trust.securePayment") as string}</span>
-          </span>
+        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <TrustBadges variant="compact" />
         </div>
       </section>
     </div>
