@@ -1,6 +1,6 @@
 import type { Product, ProductVariant } from "@/types/product"
 
-const features = [
+const features500ml = [
   "Affichage température en temps réel sur le bouchon",
   "Acier inoxydable, finition mate",
   "Isolation thermique longue durée",
@@ -8,7 +8,15 @@ const features = [
   "Sans BPA",
 ]
 
-export const product: Product = {
+const features200ml = [
+  "Affichage température en temps réel sur le bouchon",
+  "Acier inoxydable, finition mate",
+  "Isolation thermique longue durée",
+  "Capacité 200 ml",
+  "Sans BPA",
+]
+
+const gourde: Product = {
   id: "gourde-connectee-thermosmart",
   name: "Gourde connectée Thermo Chrono",
   slug: "gourde-connectee-thermosmart",
@@ -27,13 +35,7 @@ export const product: Product = {
       id: "bleu",
       color: "Bleu pastel",
       price: 19.99,
-      images: [
-        "/images/gourde bleu.png",
-        "/images/gourde bleu.png",
-        "/images/gourde bleu.png",
-        "/images/gourde bleu.png",
-        "/images/gourde bleu.png",
-      ],
+      images: ["/images/gourde bleu.png"],
     },
     {
       id: "blanc",
@@ -42,24 +44,69 @@ export const product: Product = {
       images: ["/images/gourde bleu.png"],
     },
   ],
-  features,
+  features: features500ml,
   inStock: true,
-  videoUrl: undefined, // À remplir avec une URL de vidéo (produit en action) si besoin
+  videoUrl: undefined,
 }
 
+/** Tasse connectée 200 ml — version compacte noir */
+const tasse200ml: Product = {
+  id: "tasse-connectee-thermosmart-200ml",
+  name: "Tasse connectée Thermo Chrono 200 ml",
+  slug: "tasse-connectee-thermosmart-200ml",
+  description:
+    "Tasse intelligente 200 ml en acier inoxydable avec affichage de température intégré sur le bouchon. Même technologie que la gourde Thermo Chrono dans un format compact : idéale pour le café ou les petites portions au bureau.",
+  shortDescription:
+    "Tasse 200 ml avec affichage de température en temps réel. Format compact, finition noire mate.",
+  variants: [
+    {
+      id: "noir",
+      color: "Noir",
+      price: 12.99,
+      images: ["/images/tasseNoir.png"],
+    },
+    {
+      id: "bleu",
+      color: "Bleu pastel",
+      price: 12.99,
+      images: ["/images/tasseBleu.png"],
+    },
+    {
+      id: "violet",
+      color: "Violet",
+      price: 12.99,
+      images: ["/images/tasseViolet.png"],
+    },
+    {
+      id: "blanc",
+      color: "Blanc",
+      price: 12.99,
+      images: ["/images/tasseBlanche.png"],
+    },
+  ],
+  features: features200ml,
+  inStock: true,
+  videoUrl: undefined,
+}
+
+const products: Product[] = [gourde, tasse200ml]
+
+/** Produit mis en avant sur la page d'accueil (gourde 500 ml) */
+export const product = gourde
+
 export function getProductBySlug(slug: string): Product | undefined {
-  return product.slug === slug ? product : undefined
+  return products.find((p) => p.slug === slug)
 }
 
 export function getProductById(id: string): Product | undefined {
-  return product.id === id ? product : undefined
+  return products.find((p) => p.id === id)
 }
 
 export function getVariant(product: Product, variantId: string): ProductVariant | undefined {
   return product.variants.find((v) => v.id === variantId)
 }
 
-/** Entrées catalogue pour la grille boutique : 1 par variante (prêt pour plusieurs produits plus tard) */
+/** Entrées catalogue pour la grille boutique : 1 par variante, tous produits */
 export interface CatalogItem {
   product: Product
   variant: ProductVariant
@@ -67,6 +114,12 @@ export interface CatalogItem {
 
 export function getCatalogItems(): CatalogItem[] {
   const items: CatalogItem[] = []
-  items.push(...product.variants.map((variant) => ({ product, variant })))
+  for (const p of products) {
+    items.push(...p.variants.map((variant) => ({ product: p, variant })))
+  }
   return items
+}
+
+export function getAllProducts(): Product[] {
+  return products
 }

@@ -1,18 +1,17 @@
 import { MetadataRoute } from "next"
-import { product } from "@/data/products"
+import { getAllProducts } from "@/data/products"
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://www.example.com"
   const now = new Date()
+  const products = getAllProducts()
 
-  const productUrls = [
-    {
-      url: `${baseUrl}/produit/${product.slug}`,
-      lastModified: now,
-      changeFrequency: "weekly" as const,
-      priority: 0.9,
-    },
-  ]
+  const productUrls = products.map((product) => ({
+    url: `${baseUrl}/produit/${product.slug}`,
+    lastModified: now,
+    changeFrequency: "weekly" as const,
+    priority: 0.9,
+  }))
 
   return [
     {
