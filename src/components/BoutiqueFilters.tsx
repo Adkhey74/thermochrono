@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ChevronDown, Palette, Euro, Package, RotateCcw } from "lucide-react"
 import { useI18n } from "@/lib/i18n/context"
 import { cn } from "@/lib/utils"
@@ -20,6 +20,42 @@ interface BoutiqueFiltersProps {
   onFiltersChange: (f: ShopFiltersState) => void
 }
 
+function FilterSection({
+  open,
+  onToggle,
+  icon: Icon,
+  title,
+  children,
+  isLast,
+}: {
+  open: boolean
+  onToggle: () => void
+  icon: React.ElementType
+  title: string
+  children: React.ReactNode
+  isLast?: boolean
+}) {
+  return (
+    <div className={cn(!isLast && "border-b border-border/60")}>
+      <button
+        type="button"
+        onClick={onToggle}
+        className="w-full flex items-center gap-3 py-3.5 text-left text-sm font-semibold text-foreground hover:text-primary transition-colors rounded-lg -mx-1 px-1 min-h-[44px] touch-manipulation"
+        aria-expanded={open}
+      >
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted/80 text-muted-foreground">
+          <Icon className="h-4 w-4" />
+        </span>
+        <span className="flex-1">{title}</span>
+        <ChevronDown
+          className={cn("h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200", open && "rotate-180")}
+        />
+      </button>
+      {open && <div className="pb-4 pl-11">{children}</div>}
+    </div>
+  )
+}
+
 export function BoutiqueFilters({
   availableColors,
   priceBounds,
@@ -30,19 +66,37 @@ export function BoutiqueFilters({
   const [openColor, setOpenColor] = useState(false)
   const [openPrice, setOpenPrice] = useState(false)
   const [openAvailability, setOpenAvailability] = useState(false)
+  const [priceMinInput, setPriceMinInput] = useState<string>("")
+  const [priceMaxInput, setPriceMaxInput] = useState<string>("")
+
+  useEffect(() => {
+    setPriceMinInput(filters.priceMin !== null ? String(filters.priceMin) : "")
+  }, [filters.priceMin])
+  useEffect(() => {
+    setPriceMaxInput(filters.priceMax !== null ? String(filters.priceMax) : "")
+  }, [filters.priceMax])
+
+  const applyPriceFilter = () => {
+    const minStr = priceMinInput.trim()
+    const maxStr = priceMaxInput.trim()
+    const newMin = minStr === "" ? null : (() => { const n = parseFloat(minStr); return !Number.isNaN(n) && n >= 0 ? n : filters.priceMin })()
+    const newMax = maxStr === "" ? null : (() => { const n = parseFloat(maxStr); return !Number.isNaN(n) && n >= 0 ? n : filters.priceMax })()
+    if (newMin !== filters.priceMin || newMax !== filters.priceMax) {
+      onFiltersChange({ ...filters, priceMin: newMin, priceMax: newMax })
+    }
+    if (minStr !== "" && (Number.isNaN(parseFloat(minStr)) || parseFloat(minStr) < 0)) {
+      setPriceMinInput(filters.priceMin !== null ? String(filters.priceMin) : "")
+    }
+    if (maxStr !== "" && (Number.isNaN(parseFloat(maxStr)) || parseFloat(maxStr) < 0)) {
+      setPriceMaxInput(filters.priceMax !== null ? String(filters.priceMax) : "")
+    }
+  }
 
   const hasActiveFilters =
     filters.colors.length > 0 ||
     filters.inStockOnly ||
     filters.priceMin !== null ||
     filters.priceMax !== null
-
-  const setPriceMin = (value: number | null) => {
-    onFiltersChange({ ...filters, priceMin: value })
-  }
-  const setPriceMax = (value: number | null) => {
-    onFiltersChange({ ...filters, priceMax: value })
-  }
 
   const resetFilters = () => {
     onFiltersChange({
@@ -68,40 +122,6 @@ export function BoutiqueFilters({
   const toggleAvailability = () => {
     onFiltersChange({ ...filters, inStockOnly: !filters.inStockOnly })
   }
-
-  const FilterSection = ({
-    open,
-    onToggle,
-    icon: Icon,
-    title,
-    children,
-    isLast,
-  }: {
-    open: boolean
-    onToggle: () => void
-    icon: React.ElementType
-    title: string
-    children: React.ReactNode
-    isLast?: boolean
-  }) => (
-    <div className={cn(!isLast && "border-b border-border/60")}>
-      <button
-        type="button"
-        onClick={onToggle}
-        className="w-full flex items-center gap-3 py-3.5 text-left text-sm font-semibold text-foreground hover:text-primary transition-colors rounded-lg -mx-1 px-1 min-h-[44px] touch-manipulation"
-        aria-expanded={open}
-      >
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted/80 text-muted-foreground">
-          <Icon className="h-4 w-4" />
-        </span>
-        <span className="flex-1">{title}</span>
-        <ChevronDown
-          className={cn("h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200", open && "rotate-180")}
-        />
-      </button>
-      {open && <div className="pb-4 pl-11">{children}</div>}
-    </div>
-  )
 
   return (
     <aside className="w-full lg:w-60 shrink-0">
@@ -185,18 +205,11 @@ export function BoutiqueFilters({
               <input
                 id="filter-price-min"
                 type="number"
-                min={priceBounds.min}
-                max={priceBounds.max}
+                min={0}
                 step={0.01}
-                value={filters.priceMin ?? ""}
-                onChange={(e) => {
-                  const v = e.target.value
-                  if (v === "") setPriceMin(null)
-                  else {
-                    const n = parseFloat(v)
-                    if (!Number.isNaN(n)) setPriceMin(Math.max(priceBounds.min, Math.min(priceBounds.max, n)))
-                  }
-                }}
+                value={priceMinInput}
+                onChange={(e) => setPriceMinInput(e.target.value)}
+                onBlur={applyPriceFilter}
                 placeholder={String(priceBounds.min)}
                 className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
               />
@@ -208,18 +221,11 @@ export function BoutiqueFilters({
               <input
                 id="filter-price-max"
                 type="number"
-                min={priceBounds.min}
-                max={priceBounds.max}
+                min={0}
                 step={0.01}
-                value={filters.priceMax ?? ""}
-                onChange={(e) => {
-                  const v = e.target.value
-                  if (v === "") setPriceMax(null)
-                  else {
-                    const n = parseFloat(v)
-                    if (!Number.isNaN(n)) setPriceMax(Math.max(priceBounds.min, Math.min(priceBounds.max, n)))
-                  }
-                }}
+                value={priceMaxInput}
+                onChange={(e) => setPriceMaxInput(e.target.value)}
+                onBlur={applyPriceFilter}
                 placeholder={String(priceBounds.max)}
                 className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
               />
