@@ -9,7 +9,7 @@ export const translations: Record<Locale, Record<string, unknown>> = {
     },
     header: {
       home: "Accueil",
-      shop: "Produits",
+      shop: "Nos produits",
       about: "À propos",
       cart: "Panier",
       contact: "Contact",
@@ -144,6 +144,9 @@ export const translations: Record<Locale, Record<string, unknown>> = {
       subtitle: "Ce que nos clients en pensent",
       starLabel: "{{count}} / 5 étoiles",
       reviewCount: "{{count}} avis",
+      prev: "Avis précédent",
+      next: "Avis suivant",
+      goToReview: "Voir l'avis {{n}}",
     },
     faq: {
       title: "Questions fréquentes",
@@ -213,7 +216,7 @@ export const translations: Record<Locale, Record<string, unknown>> = {
     },
     header: {
       home: "Home",
-      shop: "Products",
+      shop: "Our products",
       about: "About",
       cart: "Cart",
       contact: "Contact",
@@ -348,6 +351,9 @@ export const translations: Record<Locale, Record<string, unknown>> = {
       subtitle: "What our customers say",
       starLabel: "{{count}} / 5 stars",
       reviewCount: "{{count}} reviews",
+      prev: "Previous review",
+      next: "Next review",
+      goToReview: "Go to review {{n}}",
     },
     faq: {
       title: "Frequently asked questions",

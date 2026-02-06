@@ -20,7 +20,7 @@ export function TrustBadges({ variant = "row", className }: TrustBadgesProps) {
 
   if (variant === "compact") {
     return (
-      <div className={cn("flex flex-wrap items-center gap-4 sm:gap-6", className)}>
+      <div className={cn("flex flex-wrap items-center justify-center gap-4 sm:gap-6", className)}>
         {BADGES.map(({ key, icon: Icon }) => (
           <span
             key={key}
@@ -39,7 +39,7 @@ export function TrustBadges({ variant = "row", className }: TrustBadgesProps) {
   return (
     <div
       className={cn(
-        "flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-muted-foreground",
+        "inline-flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-muted-foreground",
         className
       )}
       role="list"

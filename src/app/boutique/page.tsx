@@ -195,12 +195,12 @@ export default function BoutiquePage() {
 
       </div>
 
-      {/* Badges de réassurance */}
+      {/* Bande réassurance : Paiement / Livraison / Satisfait — centrée H + V */}
       <section
-        className="w-full mt-6 sm:mt-10 pt-4 sm:pt-6 pb-4 sm:pb-5 border-t border-border/80 bg-background"
+        className="w-full mt-6 sm:mt-10 min-h-[4.5rem] flex flex-col items-center justify-center border-t border-border/80 bg-muted/30 py-6 sm:py-8"
         aria-label="Engagements"
       >
-        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex justify-center">
           <TrustBadges variant="compact" />
         </div>
       </section>

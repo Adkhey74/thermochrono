@@ -7,7 +7,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { ProductCard } from "@/components/ProductCard"
-import { ProductReviews } from "@/components/ProductReviews"
+import { ReviewsCarousel } from "@/components/ReviewsCarousel"
 import { FaqSection } from "@/components/FaqSection"
 import { TrustBadges } from "@/components/TrustBadges"
 import { product } from "@/data/products"
@@ -260,17 +260,14 @@ export default function Home() {
             viewport={{ once: true }}
           >
             <TrustBadges variant="row" />
-            <p className="text-center mt-4 text-sm font-medium text-muted-foreground">
-              {t("trust.guaranteeShort") as string}
-            </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Avis clients */}
+      {/* Avis clients — carrousel qui défile */}
       <section className="py-14 sm:py-20 lg:py-24 bg-muted">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
-          <ProductReviews limit={3} />
+          <ReviewsCarousel />
         </div>
       </section>
 
