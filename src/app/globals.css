@@ -177,6 +177,14 @@
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-muted-foreground/50;
   }
+
+  /* Toast (sonner) : forcer le centrage en haut */
+  [data-sonner-toaster][data-x-position="center"],
+  .toaster-top-center[data-sonner-toaster] {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    right: auto !important;
+  }
 }
 
 @layer utilities {

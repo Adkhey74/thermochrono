@@ -82,6 +82,7 @@ export default function RootLayout({
             position="top-center"
             richColors
             duration={6000}
+            className="toaster-top-center"
             toastOptions={{
               className: "shadow-lg",
             }}

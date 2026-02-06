@@ -20,6 +20,7 @@ export function ProductCard({ product, variant: variantProp, className }: Produc
   const variant = variantProp ?? product.variants[0]
   const display = getProductDisplay(product, t, variant)
   const imageSrc = variant?.images?.[0]
+  const imageSrcHover = variant?.images?.[1]
   const href = product?.slug ? `/produit/${product.slug}` : "/boutique"
 
   return (
@@ -27,13 +28,25 @@ export function ProductCard({ product, variant: variantProp, className }: Produc
       <Link href={href} className="block">
         <div className="relative aspect-[3/4] overflow-hidden rounded-t-2xl bg-card flex items-center justify-center">
           {imageSrc ? (
-          <Image
-            src={imageSrc}
-            alt={display.name}
-            fill
-            className="object-contain object-center p-6 sm:p-8 transition-transform duration-300 ease-out group-hover:scale-[1.02]"
-            sizes="(max-width: 768px) 100vw, 320px"
-          />
+            <>
+              <Image
+                src={imageSrc}
+                alt={display.name}
+                fill
+                className="object-contain object-center p-6 sm:p-8 transition-transform duration-300 ease-out group-hover:scale-[1.02]"
+                sizes="(max-width: 768px) 100vw, 320px"
+              />
+              {imageSrcHover && (
+                <Image
+                  src={imageSrcHover}
+                  alt=""
+                  fill
+                  className="object-contain object-center p-6 sm:p-8 transition-all duration-300 ease-out opacity-0 group-hover:opacity-100 group-hover:scale-[1.02] absolute inset-0"
+                  sizes="(max-width: 768px) 100vw, 320px"
+                  aria-hidden
+                />
+              )}
+            </>
           ) : (
             <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm" aria-hidden>
               {display.name}
