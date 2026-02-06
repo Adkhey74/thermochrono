@@ -45,7 +45,7 @@ const reviewsFr: Review[] = [
     id: "5",
     author: "Julie R.",
     rating: 5,
-    text: "Enfin une gourde connectée qui fait ce qu’il faut sans prise de tête. Design sobre, livraison en 2 jours. Je recommande.",
+    text: "Enfin une gourde connectée qui fait ce qu’il faut sans prise de tête. Design sobre, livraison sous 10 à 14 jours. Je recommande.",
     date: "2024-12-20",
   },
 ]
@@ -87,7 +87,7 @@ const reviewsEn: Review[] = [
     id: "5",
     author: "Julie R.",
     rating: 5,
-    text: "Finally a connected bottle that does what it should without the fuss. Sleek design, 2-day delivery. I recommend it.",
+    text: "Finally a connected bottle that does what it should without the fuss. Sleek design, delivery in 10 to 14 days. I recommend it.",
     date: "2024-12-20",
   },
 ]
