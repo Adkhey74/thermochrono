@@ -379,10 +379,7 @@ export default function CheckoutPage() {
       {/* Overlay : la page checkout ne s'affiche que quand tout est prêt */}
       {!checkoutReady && (
         <div
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center min-h-screen"
-          style={{
-            background: "linear-gradient(135deg, #f5f3ff 0%, #e0e7ff 50%, #dbeafe 100%)",
-          }}
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center min-h-screen bg-white"
           aria-live="polite"
           aria-busy="true"
         >
@@ -393,11 +390,10 @@ export default function CheckoutPage() {
         </div>
       )}
 
-      <div className="min-h-full flex flex-col">
-        <main className="flex-1 w-full py-6 px-4 sm:py-8 md:py-12">
-          <div className="max-w-5xl mx-auto">
-            {/* Carte blanche type Stripe : deux colonnes sur desktop */}
-            <div className="bg-white rounded-2xl shadow-xl border border-neutral-200/80 overflow-hidden">
+      <div className="h-full min-h-full flex flex-col w-full">
+        <main className="flex-1 w-full min-h-0 flex flex-col">
+          {/* Contenu pleine page : deux colonnes sur desktop */}
+          <div className="bg-white flex-1 flex flex-col min-h-0 w-full overflow-hidden">
               <div className="flex-shrink-0 flex items-center justify-center py-5 px-6 border-b border-neutral-200">
                 <Image
                   src="/images/logo.png"
@@ -407,7 +403,7 @@ export default function CheckoutPage() {
                   className="h-12 sm:h-14 w-auto object-contain"
                 />
               </div>
-              <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] min-h-0">
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] flex-1 min-h-0">
                 {/* Colonne gauche : Order Summary */}
                 <div className="p-6 sm:p-8 lg:py-8 lg:px-10 border-b lg:border-b-0 lg:border-r border-neutral-200">
                   <Link
@@ -550,7 +546,6 @@ export default function CheckoutPage() {
                 </div>
               </div>
             </div>
-          </div>
         </main>
       </div>
     </>
