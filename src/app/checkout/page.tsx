@@ -44,7 +44,8 @@ const mollieComponentStyles = {
     fontWeight: "400",
     lineHeight: "1.5",
     "::placeholder": {
-      color: "rgba(0, 0, 0, 0.35)",
+      color: "#737373",
+      opacity: 1,
     },
   },
   valid: { color: "#171717" },
@@ -390,10 +391,10 @@ export default function CheckoutPage() {
         </div>
       )}
 
-      <div className="h-full min-h-full flex flex-col w-full">
-        <main className="flex-1 w-full min-h-0 flex flex-col">
-          {/* Contenu pleine page : deux colonnes sur desktop */}
-          <div className="bg-white flex-1 flex flex-col min-h-0 w-full overflow-hidden">
+      <div className="min-h-full flex flex-col w-full lg:h-full">
+        <main className="w-full flex flex-col min-h-0 lg:flex-1 lg:min-h-0">
+          {/* Contenu pleine page : scroll sur mobile, pleine hauteur sur desktop */}
+          <div className="bg-white flex flex-col min-h-0 w-full lg:flex-1 lg:min-h-0 lg:overflow-hidden">
               <div className="flex-shrink-0 flex items-center justify-center py-5 px-6 border-b border-neutral-200">
                 <Image
                   src="/images/logo.png"
@@ -403,7 +404,7 @@ export default function CheckoutPage() {
                   className="h-12 sm:h-14 w-auto object-contain"
                 />
               </div>
-              <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] flex-1 min-h-0">
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] min-h-0 lg:flex-1">
                 {/* Colonne gauche : Order Summary */}
                 <div className="p-6 sm:p-8 lg:py-8 lg:px-10 border-b lg:border-b-0 lg:border-r border-neutral-200">
                   <Link
@@ -484,10 +485,11 @@ export default function CheckoutPage() {
                             type="button"
                             onClick={handleApplePay}
                             disabled={applePayLoading || payLoading}
-                            className="w-full min-h-[48px] sm:min-h-[52px] border-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full min-h-[50px] sm:min-h-[52px] py-3 px-4 rounded-[10px] border-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                             style={{
                               WebkitAppearance: "-apple-pay-button",
                               appearance: "-apple-pay-button" as React.CSSProperties["appearance"],
+                              borderRadius: "10px",
                             }}
                             aria-label={t("cart.payWithApplePay") as string}
                           />
