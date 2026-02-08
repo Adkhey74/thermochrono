@@ -118,7 +118,7 @@ export async function POST(request: Request) {
 
   try {
     const payment = await mollieClient.payments.create(
-      createParams as Parameters<typeof mollieClient.payments.create>[0]
+      createParams as unknown as Parameters<typeof mollieClient.payments.create>[0]
     )
 
     const checkoutUrl = payment.getCheckoutUrl()
