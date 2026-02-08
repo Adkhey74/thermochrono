@@ -37,7 +37,8 @@ function OrderSuccessContent() {
   const { t } = useI18n()
   const clearCart = useCartStore((s) => s.clearCart)
   const searchParams = useSearchParams()
-  const sessionId = searchParams.get("session_id")
+  // Mollie redirige avec ?id=tr_xxx
+  const paymentId = searchParams.get("id") ?? searchParams.get("payment_id")
   const [details, setDetails] = useState<SessionDetails | null>(null)
 
   useEffect(() => {
@@ -45,14 +46,14 @@ function OrderSuccessContent() {
   }, [clearCart])
 
   useEffect(() => {
-    if (!sessionId) return
-    fetch(`/api/checkout/session?session_id=${encodeURIComponent(sessionId)}`)
+    if (!paymentId) return
+    fetch(`/api/checkout/session?payment_id=${encodeURIComponent(paymentId)}`)
       .then((res) => res.json())
       .then((data) => {
         if (!data.error && (data.email || data.address)) setDetails(data)
       })
       .catch(() => {})
-  }, [sessionId])
+  }, [paymentId])
 
   const shippingLine = details?.address
     ? formatAddress(details.address, details.name ?? null)

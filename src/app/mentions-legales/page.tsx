@@ -110,7 +110,7 @@ export default function MentionsLegalesPage() {
                   <p>
                     <strong>Données collectées :</strong> Dans le cadre de la boutique en ligne (commandes, panier,
                     création de compte le cas échéant), peuvent être collectés : nom, prénom, adresse email, adresse
-                    postale, numéro de téléphone et données de paiement (traitement sécurisé par Stripe).
+                    postale, numéro de téléphone et données de paiement (traitement sécurisé par Mollie).
                   </p>
                   <p>
                     <strong>Finalité :</strong> Ces données sont collectées pour traiter vos commandes, vous contacter

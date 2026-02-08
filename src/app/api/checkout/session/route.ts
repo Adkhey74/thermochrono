@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import Stripe from "stripe"
+import createMollieClient from "@mollie/api-client"
 
 export interface CheckoutItem {
   productId: string
@@ -15,15 +15,13 @@ export interface CheckoutBody {
 }
 
 export async function POST(request: Request) {
-  const apiKey = process.env.STRIPE_SECRET_KEY?.trim()
+  const apiKey = process.env.MOLLIE_API_KEY?.trim()
   if (!apiKey || typeof apiKey !== "string") {
     return NextResponse.json(
-      { error: "Stripe n'est pas configuré (STRIPE_SECRET_KEY manquant ou invalide)." },
+      { error: "Mollie n'est pas configuré (MOLLIE_API_KEY manquant ou invalide)." },
       { status: 500 }
     )
   }
-
-  const stripe = new Stripe(apiKey)
 
   const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000").trim().replace(/\/$/, "")
 
@@ -55,128 +53,99 @@ export async function POST(request: Request) {
     )
   }
 
-  function toAbsoluteImageUrl(path: string): string {
-    if (!path?.trim()) return ""
-    if (path.startsWith("http://") || path.startsWith("https://")) {
-      return path
-    }
-    const pathNormalized = path.startsWith("/") ? path : `/${path}`
-    return encodeURI(`${baseUrl}${pathNormalized}`)
-  }
+  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  const total = Math.max(0.01, subtotal - discountAmount)
+  const amountStr = total.toFixed(2)
 
-  const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = items.map(
-    (item: CheckoutItem) => {
-      const unitAmount = Math.round(item.price * 100)
-      if (unitAmount < 50) {
-        throw new Error(`Montant invalide pour ${item.name}.`)
-      }
-      const imageUrl = toAbsoluteImageUrl(item.image)
-      return {
-        price_data: {
-          currency: "eur",
-          product_data: {
-            name: item.name,
-            images: imageUrl ? [imageUrl] : undefined,
-          },
-          unit_amount: unitAmount,
-        },
-        quantity: item.quantity,
-      }
-    }
-  )
+  const mollieClient = createMollieClient({ apiKey })
 
-  const successUrl = `${baseUrl}/commande/success?session_id={CHECKOUT_SESSION_ID}`
-  const cancelUrl = `${baseUrl}/commande/annulee`
+  const description =
+    items.length === 1
+      ? items[0].name
+      : `Commande ${items.length} articles`
 
   try {
-    const params: Stripe.Checkout.SessionCreateParams = {
-      mode: "payment",
-      line_items,
-      success_url: successUrl,
-      cancel_url: cancelUrl,
-      locale: "fr",
-      // Collecte des infos client sur la page de paiement Stripe
-      phone_number_collection: { enabled: true },
-      shipping_address_collection: {
-        allowed_countries: ["FR"],
+    const payment = await mollieClient.payments.create({
+      amount: {
+        value: amountStr,
+        currency: "EUR",
       },
+      description,
+      redirectUrl: `${baseUrl}/commande/success`,
+      webhookUrl: `${baseUrl}/api/webhooks/mollie`,
+      metadata: {
+        itemCount: String(items.length),
+        discount: String(discountAmount),
+      },
+    })
+
+    const checkoutUrl = payment.getCheckoutUrl()
+    if (!checkoutUrl) {
+      return NextResponse.json(
+        { error: "Mollie n'a pas renvoyé d'URL de paiement." },
+        { status: 500 }
+      )
     }
 
-    if (discountAmount > 0) {
-      const discountInCents = Math.round(discountAmount * 100)
-      const coupon = await stripe.coupons.create({
-        amount_off: discountInCents,
-        currency: "eur",
-        duration: "once",
-        name: "Réduction promo",
-      })
-      params.discounts = [{ coupon: coupon.id }]
-    }
-
-    const session = await stripe.checkout.sessions.create(params)
-
-    return NextResponse.json({ url: session.url })
+    return NextResponse.json({ url: checkoutUrl })
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Erreur Stripe"
+    const message = err instanceof Error ? err.message : "Erreur Mollie"
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }
 
-/** Récupère les infos client d'une session Checkout (pour la page succès). */
+/** Récupère les infos d'un paiement Mollie (pour la page succès). */
 export async function GET(request: Request) {
-  const apiKey = process.env.STRIPE_SECRET_KEY?.trim()
+  const apiKey = process.env.MOLLIE_API_KEY?.trim()
   if (!apiKey || typeof apiKey !== "string") {
     return NextResponse.json(
-      { error: "Stripe n'est pas configuré." },
+      { error: "Mollie n'est pas configuré." },
       { status: 500 }
     )
   }
 
   const { searchParams } = new URL(request.url)
-  const sessionId = searchParams.get("session_id")?.trim()
-  if (!sessionId) {
+  const paymentId = searchParams.get("payment_id")?.trim() || searchParams.get("id")?.trim()
+  if (!paymentId) {
     return NextResponse.json(
-      { error: "session_id manquant." },
+      { error: "payment_id manquant." },
       { status: 400 }
     )
   }
 
-  const stripe = new Stripe(apiKey)
-  try {
-    const session = await stripe.checkout.sessions.retrieve(sessionId, {
-      expand: ["customer_details"],
-    })
+  const mollieClient = createMollieClient({ apiKey })
 
-    if (session.payment_status !== "paid") {
+  try {
+    const payment = await mollieClient.payments.get(paymentId)
+
+    if (payment.status !== "paid") {
       return NextResponse.json(
-        { error: "Session non payée." },
+        { error: "Paiement non abouti." },
         { status: 400 }
       )
     }
 
-    const customer = session.customer_details
-    const sessionWithShipping = session as Stripe.Checkout.Session & {
-      shipping_details?: { address?: Stripe.Address; name?: string | null }
-    }
-    const shippingDetails = sessionWithShipping.shipping_details
-    const shipping = shippingDetails?.address
+    const details = payment.details as Record<string, unknown> | undefined
+    const shippingAddress = payment.shippingAddress as { streetAndNumber?: string; city?: string; postalCode?: string; country?: string } | undefined
+
+    const address = shippingAddress
+      ? {
+          line1: shippingAddress.streetAndNumber ?? null,
+          line2: null,
+          city: shippingAddress.city ?? null,
+          postal_code: shippingAddress.postalCode ?? null,
+          country: shippingAddress.country ?? null,
+        }
+      : null
 
     return NextResponse.json({
-      email: customer?.email ?? null,
-      phone: customer?.phone ?? null,
-      name: customer?.name ?? shippingDetails?.name ?? null,
-      address: shipping
-        ? {
-            line1: shipping.line1 ?? null,
-            line2: shipping.line2 ?? null,
-            city: shipping.city ?? null,
-            postal_code: shipping.postal_code ?? null,
-            country: shipping.country ?? null,
-          }
-        : null,
+      email: (details?.consumerAccount as string | undefined) ?? null,
+      phone: null,
+      name: (details?.consumerName as string | undefined) ?? null,
+      address,
     })
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Erreur Stripe"
+    const message = err instanceof Error ? err.message : "Erreur Mollie"
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }

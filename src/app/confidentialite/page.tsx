@@ -48,7 +48,7 @@ export default function ConfidentialitePage() {
                       <li>Adresse email</li>
                       <li>Adresse de livraison / facturation</li>
                       <li>Numéro de téléphone (si fourni)</li>
-                      <li>Données de paiement (traitées directement par Stripe ; nous ne stockons pas les numéros de carte)</li>
+                      <li>Données de paiement (traitées directement par Mollie ; nous ne stockons pas les numéros de carte)</li>
                     </ul>
                   </div>
                   <div className="bg-muted/50 p-4 rounded-lg">
@@ -59,7 +59,7 @@ export default function ConfidentialitePage() {
                     </ul>
                   </div>
                   <p className="text-sm text-muted-foreground mt-4">
-                    Les données de paiement (carte bancaire, Apple Pay, etc.) sont collectées et traitées par Stripe.
+                    Les données de paiement (carte bancaire, Apple Pay, etc.) sont collectées et traitées par Mollie.
                     Nous ne recevons pas ni ne conservons les numéros de carte.
                   </p>
                 </div>
@@ -72,7 +72,7 @@ export default function ConfidentialitePage() {
                   <p>Vos données sont utilisées pour :</p>
                   <ul className="list-disc pl-6 space-y-2">
                     <li><strong>Exécution des commandes :</strong> traitement des achats, livraison, facturation</li>
-                    <li><strong>Paiement :</strong> sécurisation des transactions via Stripe</li>
+                    <li><strong>Paiement :</strong> sécurisation des transactions via Mollie</li>
                     <li><strong>Relation client :</strong> réponses à vos questions, suivi des commandes</li>
                     <li><strong>Obligations légales et comptables :</strong> conservation des pièces et données requises par la loi</li>
                   </ul>
@@ -113,7 +113,7 @@ export default function ConfidentialitePage() {
                   <p>Vos données peuvent être transmises à :</p>
                   <ul className="list-disc pl-6 space-y-2">
                     <li><strong>Adil KHADICH (titulaire du site) :</strong> traitement des commandes et relation client</li>
-                    <li><strong>Stripe :</strong> traitement des paiements (carte, Apple Pay, etc.). Stripe agit en tant que sous-traitant et est soumis à des obligations de confidentialité et de sécurité</li>
+                    <li><strong>Mollie :</strong> traitement des paiements (carte, Apple Pay, etc.). Mollie agit en tant que sous-traitant et est soumis à des obligations de confidentialité et de sécurité</li>
                     <li><strong>Hébergeur du site :</strong> pour le fonctionnement technique du site (hébergeur indiqué dans les mentions légales)</li>
                   </ul>
                   <p className="mt-4">
@@ -132,7 +132,7 @@ export default function ConfidentialitePage() {
                   <p>Nous mettons en œuvre des mesures pour protéger vos données contre l'accès non autorisé, la perte ou la divulgation, notamment :</p>
                   <ul className="list-disc pl-6 space-y-2">
                     <li>Connexion au site en HTTPS</li>
-                    <li>Paiements sécurisés via Stripe (données de carte non stockées sur nos serveurs)</li>
+                    <li>Paiements sécurisés via Mollie (données de carte non stockées sur nos serveurs)</li>
                     <li>Accès aux données personnelles limité aux personnes autorisées</li>
                   </ul>
                 </div>
