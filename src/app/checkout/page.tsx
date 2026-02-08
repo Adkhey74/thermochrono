@@ -129,20 +129,9 @@ export default function CheckoutPage() {
           return
         }
         throw new Error(t("cart.checkoutError") as string)
-      } else {
-        const res = await fetch("/api/checkout/session", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ items: checkoutItems, discountAmount }),
-        })
-        const data = await res.json()
-        if (!res.ok) throw new Error(data.error ?? (t("cart.checkoutError") as string))
-        if (data.url) {
-          window.location.href = data.url
-          return
-        }
-        throw new Error(t("cart.checkoutError") as string)
       }
+      setPayError(t("checkout.paymentFormUnavailable") as string)
+      setPayLoading(false)
     } catch (err) {
       setPayError(err instanceof Error ? err.message : (t("cart.checkoutError") as string))
       setPayLoading(false)
@@ -250,24 +239,35 @@ export default function CheckoutPage() {
               </div>
 
               <form onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-6">
-                {profileId && (
-                  <section>
-                    <div className="flex items-center gap-2 mb-3">
-                      <CreditCard className="h-5 w-5 text-foreground" aria-hidden />
-                      <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">
-                        {t("checkout.cardDetails") as string}
-                      </h3>
+                <section>
+                  <div className="flex items-center gap-2 mb-3">
+                    <CreditCard className="h-5 w-5 text-foreground" aria-hidden />
+                    <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">
+                      {t("checkout.cardDetails") as string}
+                    </h3>
+                  </div>
+                  {profileId ? (
+                    <>
+                      <div
+                        ref={cardRef}
+                        className="checkout-mollie-card rounded-xl border-2 border-border bg-background p-4 sm:p-5 min-h-[220px] transition-colors focus-within:border-foreground/30"
+                      />
+                      <p className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                        <Lock className="h-3.5 w-3.5 shrink-0" />
+                        {t("checkout.secureByMollie") as string}
+                      </p>
+                    </>
+                  ) : (
+                    <div className="rounded-xl border-2 border-dashed border-border bg-muted/30 p-6 text-center">
+                      <p className="text-sm text-muted-foreground">
+                        {t("checkout.paymentFormUnavailable") as string}
+                      </p>
+                      <p className="mt-2 text-xs text-muted-foreground">
+                        {t("checkout.paymentFormUnavailableHint") as string}
+                      </p>
                     </div>
-                    <div
-                      ref={cardRef}
-                      className="checkout-mollie-card rounded-xl border-2 border-border bg-background p-4 sm:p-5 min-h-[220px] transition-colors focus-within:border-foreground/30"
-                    />
-                    <p className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-                      <Lock className="h-3.5 w-3.5 shrink-0" />
-                      {t("checkout.secureByMollie") as string}
-                    </p>
-                  </section>
-                )}
+                  )}
+                </section>
 
                 {payError && (
                   <div className="rounded-lg bg-destructive/10 border border-destructive/20 px-4 py-3">
@@ -282,13 +282,11 @@ export default function CheckoutPage() {
                     type="submit"
                     size="lg"
                     className="w-full min-h-[52px] text-base font-semibold rounded-xl touch-manipulation shadow-sm"
-                    disabled={payLoading || (!!profileId && !scriptReady)}
+                    disabled={payLoading || !profileId || (profileId && !scriptReady)}
                   >
                     {payLoading
                       ? (t("checkout.paying") as string)
-                      : profileId
-                        ? (t("checkout.payButton") as string)
-                        : (t("checkout.goToPayment") as string)}
+                      : (t("checkout.payButton") as string)}
                   </Button>
                   <Button
                     variant="outline"
