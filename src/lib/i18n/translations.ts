@@ -141,6 +141,9 @@ export const translations: Record<Locale, Record<string, unknown>> = {
       cardError: "Vérifiez les informations de votre carte.",
       paymentFormUnavailable: "Le formulaire de paiement n'est pas disponible.",
       paymentFormUnavailableHint: "Configurez NEXT_PUBLIC_MOLLIE_PROFILE_ID (ID profil Mollie) pour afficher le paiement par carte sur cette page.",
+      orderLabel: "Commande",
+      securePaymentByMollie: "Paiement sécurisé et fourni par",
+      previousPage: "Page précédente",
     },
     order: {
       successTitle: "Commande confirmée",
@@ -391,6 +394,9 @@ export const translations: Record<Locale, Record<string, unknown>> = {
       cardError: "Please check your card details.",
       paymentFormUnavailable: "The payment form is not available.",
       paymentFormUnavailableHint: "Set NEXT_PUBLIC_MOLLIE_PROFILE_ID (Mollie profile ID) to show card payment on this page.",
+      orderLabel: "Order",
+      securePaymentByMollie: "Secure payment provided by",
+      previousPage: "Previous page",
     },
     order: {
       successTitle: "Order confirmed",
