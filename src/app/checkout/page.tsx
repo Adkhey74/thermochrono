@@ -218,7 +218,7 @@ export default function CheckoutPage() {
   if (!shippingAddress) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-neutral-50">
-        <p className="text-neutral-500">{(t("cart.checkoutLoading") as string) ?? "Redirection…"}</p>
+        <p className="text-neutral-500">{(t("cart.checkoutLoading") as string) ?? "Redirection..."}</p>
       </div>
     )
   }
@@ -232,135 +232,144 @@ export default function CheckoutPage() {
         onError={() => setScriptError(true)}
       />
 
-      {/* Fond : image très adoucie, overlay sombre */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src="/images/checkout.png"
-          alt=""
-          fill
-          className="object-cover"
-          sizes="100vw"
-          priority
-        />
-        <div className="absolute inset-0 bg-neutral-900/50" />
-      </div>
-
-      {/* Contenu : scrollable pour ne jamais couper la modale */}
-      <div className="relative z-10 min-h-full flex flex-col">
-        <header className="flex-shrink-0 pt-4 pb-2 px-4 sm:pt-6 sm:px-8">
-          <Link
-            href="/panier"
-            className="inline-flex items-center gap-1.5 text-sm text-white/80 hover:text-white transition-colors min-h-[44px]"
-          >
-            <ChevronLeft className="h-5 w-5 shrink-0" />
-            {t("checkout.previousPage") as string}
-          </Link>
-        </header>
-
-        <main className="flex-1 flex flex-col items-center px-4 py-4 pb-6 sm:py-6 sm:pb-8 min-h-0 overflow-y-auto">
-          <div className="w-full max-w-[520px] flex flex-col items-center my-auto">
-            {/* Carte principale : hauteur limitée, contenu scrollable */}
-            <div className="w-full bg-white rounded-2xl shadow-xl border border-neutral-100 overflow-hidden flex flex-col max-h-[min(88vh,720px)]">
-              {/* En-tête fixe */}
-              <div className="flex-shrink-0">
-                <div className="flex justify-center pt-4 pb-3 sm:pt-5 sm:pb-4 border-b border-neutral-100">
-                <Link href="/" className="block" aria-label={t("common.brandName") as string}>
-                  <Image
-                    src="/images/logo.png"
-                    alt=""
-                    width={140}
-                    height={42}
-                    className="h-12 w-auto sm:h-14 object-contain"
-                  />
-                </Link>
-                </div>
-                <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-neutral-100">
-                  <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-neutral-400">
-                    {t("checkout.orderLabel") as string}
-                  </p>
-                  <p className="mt-0.5 text-base font-semibold text-neutral-900 truncate">{orderTitle}</p>
-                  <p className="mt-0.5 text-xl font-bold text-neutral-900">{total.toFixed(2)} €</p>
-                </div>
-              </div>
-
-              {/* Zone scrollable : paiement */}
-              <div className="flex-1 min-h-0 overflow-y-auto">
-                <div className="px-4 pt-3 sm:px-6">
+      <div className="min-h-full flex flex-col">
+        <main className="flex-1 w-full py-6 px-4 sm:py-8 md:py-12">
+          <div className="max-w-5xl mx-auto">
+            {/* Carte blanche type Stripe : deux colonnes sur desktop */}
+            <div className="bg-white rounded-2xl shadow-xl border border-neutral-200/80 overflow-hidden">
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] min-h-0">
+                {/* Colonne gauche : Order Summary */}
+                <div className="p-6 sm:p-8 lg:py-8 lg:px-10 border-b lg:border-b-0 lg:border-r border-neutral-200">
                   <Link
-                    href="/panier/livraison"
-                    className="text-xs text-neutral-500 hover:text-neutral-700 underline"
+                    href="/panier"
+                    className="inline-flex items-center gap-1.5 text-sm text-neutral-600 hover:text-neutral-900 mb-6 min-h-[44px] items-center touch-manipulation"
                   >
-                    {t("checkout.backToDelivery") as string}
+                    <ChevronLeft className="h-4 w-4 shrink-0" aria-hidden />
+                    <span>{t("checkout.previousPage") as string}</span>
                   </Link>
-                </div>
-                  <form onSubmit={handleSubmit} className="p-4 sm:p-6 flex flex-col">
-                    <div className="mb-4">
-                      <p className="text-[11px] font-medium text-neutral-500 uppercase tracking-wider mb-3">
-                        {t("checkout.cardDetails") as string}
-                      </p>
-                  {profileId ? (
-                    <div
-                      ref={(el) => {
-                        (cardRef as React.MutableRefObject<HTMLDivElement | null>).current = el
-                        setContainerReady(!!el)
-                      }}
-                      className="checkout-mollie-card rounded-xl bg-neutral-50 border border-neutral-200 p-3 sm:p-4 min-h-[200px] sm:min-h-[220px] relative"
-                    >
-                      {scriptError && (
-                        <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-neutral-100 p-6 text-center">
-                          <p className="text-sm text-red-600">Impossible de charger le formulaire de paiement. Vérifiez votre connexion ou désactivez les bloqueurs de publicité.</p>
-                        </div>
-                      )}
-                      {!scriptError && mollieError && (
-                        <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-neutral-100 p-6 text-center">
-                          <p className="text-sm text-red-600">{mollieError}</p>
-                          <p className="mt-2 text-xs text-neutral-500">Vérifiez que NEXT_PUBLIC_MOLLIE_PROFILE_ID est l’ID de profil (pfl_xxx) dans le dashboard Mollie.</p>
-                        </div>
-                      )}
-                      {!scriptError && !mollieError && !mollieMounted && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center rounded-xl bg-neutral-100/80 p-6 text-center">
-                          <p className="text-sm text-neutral-500">Chargement du formulaire de paiement…</p>
-                          {(loadTimeout || profileIdLooksWrong) && (
-                            <p className="mt-3 text-xs text-neutral-500 max-w-[280px]">
-                              {profileIdLooksWrong
-                                ? "Utilisez l’ID de profil Mollie (commence par pfl_), pas la clé API (test_/live_). Dashboard Mollie → Développeurs → Clés API."
-                                : "Le formulaire met du temps à s’afficher. Vérifiez que NEXT_PUBLIC_MOLLIE_PROFILE_ID est bien l’ID de profil pfl_xxx dans le dashboard Mollie."}
-                            </p>
+                  <h2 className="text-lg font-semibold text-neutral-900 mb-5">
+                    {t("cart.summary") as string}
+                  </h2>
+                  <ul className="space-y-4">
+                    {checkoutItems.map((item, idx) => (
+                      <li key={`${item.productId}-${idx}`} className="flex gap-3">
+                        <div className="relative h-14 w-14 shrink-0 rounded-lg bg-neutral-100 overflow-hidden">
+                          {item.image ? (
+                            <Image
+                              src={item.image}
+                              alt=""
+                              fill
+                              className="object-cover"
+                              sizes="56px"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-neutral-400 text-xs" aria-hidden />
                           )}
                         </div>
-                      )}
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-neutral-900 text-sm line-clamp-2">
+                            {item.name}
+                          </p>
+                          <p className="text-sm text-neutral-500 mt-0.5">
+                            {item.quantity} × {item.price.toFixed(2)} €
+                          </p>
+                        </div>
+                        <p className="text-sm font-semibold text-neutral-900 tabular-nums shrink-0">
+                          {(item.price * item.quantity).toFixed(2)} €
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-6 pt-5 border-t border-neutral-200 space-y-2">
+                    <div className="flex justify-between text-sm text-neutral-600">
+                      <span>{t("cart.subtotal") as string}</span>
+                      <span className="tabular-nums">{subtotal.toFixed(2)} €</span>
                     </div>
-                  ) : (
-                    <div className="rounded-xl bg-neutral-50 border border-neutral-200 border-dashed p-8 text-center">
-                      <p className="text-sm text-neutral-500">{t("checkout.paymentFormUnavailable") as string}</p>
-                      <p className="mt-2 text-xs text-neutral-500">Ajoutez NEXT_PUBLIC_MOLLIE_PROFILE_ID (ID profil pfl_xxx) dans .env.local</p>
-                    </div>
-                  )}
-                </div>
-
-                    {payError && (
-                      <div className="mb-4 rounded-lg bg-red-50 border border-red-100 px-3 py-2">
-                        <p className="text-xs text-red-800 font-medium" role="alert">{payError}</p>
+                    {discountAmount > 0 && (
+                      <div className="flex justify-between text-sm text-green-600">
+                        <span>{t("cart.discount") as string}</span>
+                        <span className="tabular-nums">−{discountAmount.toFixed(2)} €</span>
                       </div>
                     )}
-                    <Button
-                      type="submit"
-                      size="lg"
-                      className="w-full h-11 bg-neutral-900 hover:bg-neutral-800 text-white font-medium rounded-xl text-sm shrink-0"
-                      disabled={payLoading || !profileId || !scriptReady}
-                    >
-                      {payLoading ? (t("checkout.paying") as string) : (t("checkout.payButton") as string)}
-                    </Button>
-                  </form>
-                  <div className="px-4 pb-4 sm:px-6 sm:pb-5 shrink-0">
-                    <div className="flex items-center justify-center gap-2 text-[10px] text-neutral-400">
-                      <span className="h-1 w-1 rounded-full bg-emerald-500 shrink-0" aria-hidden />
-                      <span>
-                        {t("checkout.securePaymentByMollie") as string}{" "}
-                        <span className="font-semibold text-neutral-500">mollie</span>
-                      </span>
+                    <div className="flex justify-between text-sm font-semibold text-neutral-900 pt-2">
+                      <span>{t("cart.total") as string}</span>
+                      <span className="tabular-nums text-base">{total.toFixed(2)} €</span>
                     </div>
                   </div>
+                </div>
+
+                {/* Colonne droite : Paiement */}
+                <div className="p-6 sm:p-8 lg:py-8 lg:px-10 flex flex-col">
+                  <div className="flex-1 flex flex-col min-h-0">
+                    <h2 className="text-lg font-semibold text-neutral-900 mb-1">
+                      {t("checkout.cardDetails") as string}
+                    </h2>
+                    <Link
+                      href="/panier/livraison"
+                      className="text-sm text-neutral-500 hover:text-neutral-700 underline underline-offset-2 mb-5 inline-block"
+                    >
+                      {t("checkout.backToDelivery") as string}
+                    </Link>
+
+                    <form onSubmit={handleSubmit} className="flex flex-col flex-1">
+                      {profileId ? (
+                        <div
+                          ref={(el) => {
+                            (cardRef as React.MutableRefObject<HTMLDivElement | null>).current = el
+                            setContainerReady(!!el)
+                          }}
+                          className="checkout-mollie-card rounded-lg border border-neutral-200 bg-neutral-50/50 p-4 min-h-[200px] sm:min-h-[220px] relative"
+                        >
+                          {scriptError && (
+                            <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-neutral-100 p-6 text-center">
+                              <p className="text-sm text-red-600">Impossible de charger le formulaire de paiement.</p>
+                            </div>
+                          )}
+                          {!scriptError && mollieError && (
+                            <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-neutral-100 p-6 text-center">
+                              <p className="text-sm text-red-600">{mollieError}</p>
+                            </div>
+                          )}
+                          {!scriptError && !mollieError && !mollieMounted && (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center rounded-lg bg-neutral-50 p-6 text-center">
+                              <p className="text-sm text-neutral-500">Chargement du formulaire de paiement...</p>
+                              {(loadTimeout || profileIdLooksWrong) && (
+                                <p className="mt-2 text-xs text-neutral-400 max-w-[260px]">
+                                  {profileIdLooksWrong
+                                    ? "Vérifiez NEXT_PUBLIC_MOLLIE_PROFILE_ID (ID pfl_xxx)."
+                                    : "Affichage en cours..."}
+                                </p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="rounded-lg border border-neutral-200 border-dashed bg-neutral-50 p-8 text-center">
+                          <p className="text-sm text-neutral-500">{t("checkout.paymentFormUnavailable") as string}</p>
+                        </div>
+                      )}
+
+                      {payError && (
+                        <div className="mt-4 rounded-lg bg-red-50 border border-red-100 px-4 py-3" role="alert">
+                          <p className="text-sm text-red-800 font-medium">{payError}</p>
+                        </div>
+                      )}
+
+                      <Button
+                        type="submit"
+                        size="lg"
+                        className="mt-6 w-full min-h-[52px] bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold rounded-lg text-[15px] touch-manipulation"
+                        disabled={payLoading || !profileId || !scriptReady}
+                      >
+                        {payLoading ? (t("checkout.paying") as string) : (t("checkout.payButton") as string)}
+                      </Button>
+                    </form>
+                  </div>
+                  <p className="mt-6 pt-5 border-t border-neutral-100 text-xs text-neutral-400">
+                    {t("checkout.securePaymentByMollie") as string}{" "}
+                    <span className="font-medium text-neutral-500">Mollie</span>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
