@@ -446,15 +446,15 @@ export default function CheckoutPage() {
                   </h2>
                   <ul className="space-y-4">
                     {checkoutItems.map((item, idx) => (
-                      <li key={`${item.productId}-${idx}`} className="flex gap-3">
-                        <div className="relative h-14 w-14 shrink-0 rounded-lg bg-neutral-100 overflow-hidden">
+                      <li key={`${item.productId}-${idx}`} className="flex gap-4">
+                        <div className="relative h-24 w-24 shrink-0 rounded-lg bg-neutral-100 overflow-hidden">
                           {item.image ? (
                             <Image
                               src={item.image}
                               alt=""
                               fill
                               className="object-cover"
-                              sizes="56px"
+                              sizes="96px"
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-neutral-400 text-xs" aria-hidden />
