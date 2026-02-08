@@ -304,3 +304,49 @@
     border: 1px solid #ECEFF3;
   }
 }
+
+/* ========== Checkout : interface Mollie Components ========== */
+.checkout-page .checkout-mollie-card {
+  --mollie-input-bg: #ffffff;
+  --mollie-input-border: #e5e5e5;
+  --mollie-input-radius: 0.5rem;
+}
+
+.checkout-page .checkout-mollie-card .mollie-component {
+  background-color: var(--mollie-input-bg) !important;
+  border: 1px solid var(--mollie-input-border) !important;
+  border-radius: var(--mollie-input-radius) !important;
+  padding: 0.75rem 1rem !important;
+  min-height: 48px !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.checkout-page .checkout-mollie-card .mollie-component:hover {
+  border-color: #d4d4d4 !important;
+}
+
+.checkout-page .checkout-mollie-card .mollie-component.has-focus {
+  border-color: #000000 !important;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.08) !important;
+}
+
+.checkout-page .checkout-mollie-card .mollie-component.is-invalid {
+  border-color: #dc2626 !important;
+  background-color: #fef2f2 !important;
+}
+
+.checkout-page .checkout-mollie-card .mollie-component.is-valid {
+  border-color: #22c55e !important;
+}
+
+.checkout-page .checkout-mollie-card .mollie-component--is-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Espacement entre les champs carte (card component = plusieurs .mollie-component) */
+.checkout-page .checkout-mollie-card > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
