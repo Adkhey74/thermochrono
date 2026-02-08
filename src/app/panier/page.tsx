@@ -54,7 +54,7 @@ export default function CartPage() {
     setCheckoutLoading(true)
     try {
       sessionStorage.setItem(CHECKOUT_DISCOUNT_KEY, JSON.stringify({ discount }))
-      router.push("/checkout")
+      router.push("/panier/livraison")
     } catch {
       setCheckoutError(t("cart.checkoutError") as string)
     } finally {

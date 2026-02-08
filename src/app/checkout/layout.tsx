@@ -8,7 +8,7 @@ export default function CheckoutLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="fixed inset-0 z-[60]" style={{ isolation: "isolate" }}>
+    <div className="fixed inset-0 z-[60] overflow-y-auto" style={{ isolation: "isolate" }}>
       {children}
     </div>
   )

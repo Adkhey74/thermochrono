@@ -9,11 +9,25 @@ export interface CheckoutItem {
   image: string
 }
 
+export interface ShippingAddress {
+  givenName: string
+  familyName: string
+  email: string
+  phone?: string
+  streetAndNumber: string
+  streetAdditional?: string
+  postalCode: string
+  city: string
+  country: string
+}
+
 export interface CheckoutBody {
   items: CheckoutItem[]
   discountAmount?: number
   /** Token carte (Mollie Components) pour paiement intégré sur le site */
   cardToken?: string
+  /** Adresse de livraison (étape avant paiement) */
+  shippingAddress?: ShippingAddress
 }
 
 export async function POST(request: Request) {
@@ -46,7 +60,7 @@ export async function POST(request: Request) {
     )
   }
 
-  const { items, discountAmount = 0, cardToken } = body
+  const { items, discountAmount = 0, cardToken, shippingAddress } = body
 
   if (!items?.length || !Array.isArray(items)) {
     return NextResponse.json(
@@ -66,7 +80,7 @@ export async function POST(request: Request) {
       ? items[0].name
       : `Commande ${items.length} articles`
 
-  const baseParams = {
+  const baseParams: Record<string, unknown> = {
     amount: {
       value: amountStr,
       currency: "EUR",
@@ -78,6 +92,23 @@ export async function POST(request: Request) {
       itemCount: String(items.length),
       discount: String(discountAmount),
     },
+  }
+
+  if (shippingAddress && typeof shippingAddress === "object") {
+    const { givenName, familyName, email, phone, streetAndNumber, streetAdditional, postalCode, city, country } = shippingAddress
+    if (streetAndNumber && city && country) {
+      baseParams.shippingAddress = {
+        ...(givenName && { givenName }),
+        ...(familyName && { familyName }),
+        ...(email && { email }),
+        ...(phone && { phone }),
+        streetAndNumber: String(streetAndNumber).trim(),
+        ...(streetAdditional && { streetAdditional: String(streetAdditional).trim() }),
+        ...(postalCode && { postalCode: String(postalCode).trim() }),
+        city: String(city).trim(),
+        country: String(country).trim().toUpperCase().slice(0, 2),
+      }
+    }
   }
 
   const createParams =

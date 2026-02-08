@@ -11,6 +11,7 @@ import { getProductById, getVariant } from "@/data/products"
 import { getProductDisplay } from "@/lib/i18n/product-display"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft } from "lucide-react"
+import { loadShipping, hasValidShipping } from "@/lib/checkout-shipping"
 
 const CHECKOUT_DISCOUNT_KEY = "checkoutDiscount"
 
@@ -48,17 +49,25 @@ export default function CheckoutPage() {
   const [payLoading, setPayLoading] = useState(false)
   const [payError, setPayError] = useState<string | null>(null)
   const [discountAmount, setDiscountAmount] = useState(0)
+  const [shippingAddress, setShippingAddress] = useState<ReturnType<typeof loadShipping> | null>(null)
 
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem(CHECKOUT_DISCOUNT_KEY)
-      if (!raw) return
-      const data = JSON.parse(raw) as { discount?: number }
-      if (typeof data.discount === "number") setDiscountAmount(data.discount)
+      if (raw) {
+        const data = JSON.parse(raw) as { discount?: number }
+        if (typeof data.discount === "number") setDiscountAmount(data.discount)
+      }
+      const shipping = loadShipping()
+      if (!hasValidShipping(shipping)) {
+        router.replace("/panier/livraison")
+        return
+      }
+      setShippingAddress(shipping)
     } catch {
-      // ignore
+      router.replace("/panier/livraison")
     }
-  }, [])
+  }, [router])
 
   const checkoutItems = items
     .map((item) => {
@@ -147,10 +156,30 @@ export default function CheckoutPage() {
           setPayLoading(false)
           return
         }
+        if (!shippingAddress) {
+          setPayError(t("checkout.paymentFormUnavailable") as string)
+          setPayLoading(false)
+          return
+        }
         const res = await fetch("/api/checkout/session", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ items: checkoutItems, discountAmount, cardToken: token }),
+          body: JSON.stringify({
+            items: checkoutItems,
+            discountAmount,
+            cardToken: token,
+            shippingAddress: {
+              givenName: shippingAddress.firstName.trim(),
+              familyName: shippingAddress.lastName.trim(),
+              email: shippingAddress.email.trim(),
+              phone: shippingAddress.phone.trim() || undefined,
+              streetAndNumber: shippingAddress.streetAndNumber.trim(),
+              streetAdditional: shippingAddress.streetAdditional.trim() || undefined,
+              postalCode: shippingAddress.postalCode.trim(),
+              city: shippingAddress.city.trim(),
+              country: shippingAddress.country.trim().toUpperCase().slice(0, 2),
+            },
+          }),
         })
         const data = await res.json()
         if (!res.ok) throw new Error(data.error ?? (t("cart.checkoutError") as string))
@@ -177,6 +206,14 @@ export default function CheckoutPage() {
     )
   }
 
+  if (!shippingAddress) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
+        <p className="text-neutral-500">{(t("cart.checkoutLoading") as string) ?? "Redirection…"}</p>
+      </div>
+    )
+  }
+
   return (
     <>
       <Script
@@ -189,7 +226,7 @@ export default function CheckoutPage() {
       {/* Fond : image très adoucie, overlay sombre */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/images/boris-baldinger-eUFfY6cwjSU-unsplash.jpg"
+          src="/images/checkout.png"
           alt=""
           fill
           className="object-cover"
@@ -199,9 +236,9 @@ export default function CheckoutPage() {
         <div className="absolute inset-0 bg-neutral-900/50" />
       </div>
 
-      {/* Contenu */}
+      {/* Contenu : scrollable pour ne jamais couper la modale */}
       <div className="relative z-10 min-h-full flex flex-col">
-        <header className="flex-shrink-0 pt-6 px-4 sm:px-8">
+        <header className="flex-shrink-0 pt-4 pb-2 px-4 sm:pt-6 sm:px-8">
           <Link
             href="/panier"
             className="inline-flex items-center gap-1.5 text-sm text-white/80 hover:text-white transition-colors min-h-[44px]"
@@ -211,36 +248,54 @@ export default function CheckoutPage() {
           </Link>
         </header>
 
-        <main className="flex-1 flex items-center justify-center px-4 py-8 sm:py-12">
-          <div className="w-full max-w-[560px]">
-            {/* Carte principale */}
-            <div className="bg-white rounded-2xl shadow-xl border border-neutral-100 overflow-hidden">
-              {/* Bloc commande */}
-              <div className="px-10 pt-10 pb-7 border-b border-neutral-100">
-                <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-neutral-400">
-                  {t("checkout.orderLabel") as string}
-                </p>
-                <h1 className="mt-2 text-lg font-semibold text-neutral-900 leading-snug">
-                  {orderTitle}
-                </h1>
-                <p className="mt-2 text-2xl font-bold text-neutral-900 tracking-tight">
-                  {total.toFixed(2)} €
-                </p>
+        <main className="flex-1 flex flex-col items-center px-4 py-4 pb-6 sm:py-6 sm:pb-8 min-h-0 overflow-y-auto">
+          <div className="w-full max-w-[520px] flex flex-col items-center my-auto">
+            {/* Carte principale : hauteur limitée, contenu scrollable */}
+            <div className="w-full bg-white rounded-2xl shadow-xl border border-neutral-100 overflow-hidden flex flex-col max-h-[min(88vh,720px)]">
+              {/* En-tête fixe */}
+              <div className="flex-shrink-0">
+                <div className="flex justify-center pt-4 pb-3 sm:pt-5 sm:pb-4 border-b border-neutral-100">
+                <Link href="/" className="block" aria-label={t("common.brandName") as string}>
+                  <Image
+                    src="/images/logo.png"
+                    alt=""
+                    width={140}
+                    height={42}
+                    className="h-12 w-auto sm:h-14 object-contain"
+                  />
+                </Link>
+                </div>
+                <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-neutral-100">
+                  <p className="text-[10px] font-medium uppercase tracking-[0.12em] text-neutral-400">
+                    {t("checkout.orderLabel") as string}
+                  </p>
+                  <p className="mt-0.5 text-base font-semibold text-neutral-900 truncate">{orderTitle}</p>
+                  <p className="mt-0.5 text-xl font-bold text-neutral-900">{total.toFixed(2)} €</p>
+                </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="p-10">
-                {/* Zone formulaire carte */}
-                <div className="mb-6">
-                  <p className="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-4">
-                    {t("checkout.cardDetails") as string}
-                  </p>
+              {/* Zone scrollable : paiement */}
+              <div className="flex-1 min-h-0 overflow-y-auto">
+                <div className="px-4 pt-3 sm:px-6">
+                  <Link
+                    href="/panier/livraison"
+                    className="text-xs text-neutral-500 hover:text-neutral-700 underline"
+                  >
+                    {t("checkout.backToDelivery") as string}
+                  </Link>
+                </div>
+                  <form onSubmit={handleSubmit} className="p-4 sm:p-6 flex flex-col">
+                    <div className="mb-4">
+                      <p className="text-[11px] font-medium text-neutral-500 uppercase tracking-wider mb-3">
+                        {t("checkout.cardDetails") as string}
+                      </p>
                   {profileId ? (
                     <div
                       ref={(el) => {
                         (cardRef as React.MutableRefObject<HTMLDivElement | null>).current = el
                         setContainerReady(!!el)
                       }}
-                      className="checkout-mollie-card rounded-xl bg-neutral-50 border border-neutral-200 p-6 min-h-[240px] relative"
+                      className="checkout-mollie-card rounded-xl bg-neutral-50 border border-neutral-200 p-3 sm:p-4 min-h-[200px] sm:min-h-[220px] relative"
                     >
                       {scriptError && (
                         <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-neutral-100 p-6 text-center">
@@ -274,31 +329,29 @@ export default function CheckoutPage() {
                   )}
                 </div>
 
-                {payError && (
-                  <div className="mb-6 rounded-lg bg-red-50 border border-red-100 px-4 py-3">
-                    <p className="text-sm text-red-800 font-medium" role="alert">{payError}</p>
+                    {payError && (
+                      <div className="mb-4 rounded-lg bg-red-50 border border-red-100 px-3 py-2">
+                        <p className="text-xs text-red-800 font-medium" role="alert">{payError}</p>
+                      </div>
+                    )}
+                    <Button
+                      type="submit"
+                      size="lg"
+                      className="w-full h-11 bg-neutral-900 hover:bg-neutral-800 text-white font-medium rounded-xl text-sm shrink-0"
+                      disabled={payLoading || !profileId || !scriptReady}
+                    >
+                      {payLoading ? (t("checkout.paying") as string) : (t("checkout.payButton") as string)}
+                    </Button>
+                  </form>
+                  <div className="px-4 pb-4 sm:px-6 sm:pb-5 shrink-0">
+                    <div className="flex items-center justify-center gap-2 text-[10px] text-neutral-400">
+                      <span className="h-1 w-1 rounded-full bg-emerald-500 shrink-0" aria-hidden />
+                      <span>
+                        {t("checkout.securePaymentByMollie") as string}{" "}
+                        <span className="font-semibold text-neutral-500">mollie</span>
+                      </span>
+                    </div>
                   </div>
-                )}
-
-                <Button
-                  type="submit"
-                  size="lg"
-                  className="w-full h-12 bg-neutral-900 hover:bg-neutral-800 text-white font-medium rounded-xl text-[15px]"
-                  disabled={payLoading || !profileId || !scriptReady}
-                >
-                  {payLoading ? (t("checkout.paying") as string) : (t("checkout.payButton") as string)}
-                </Button>
-              </form>
-
-              {/* Pied de carte : Mollie */}
-              <div className="px-10 pb-8">
-                <div className="flex items-center justify-center gap-2 text-[11px] text-neutral-400">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" aria-hidden />
-                  <span>
-                    {t("checkout.securePaymentByMollie") as string}{" "}
-                    <span className="font-semibold text-neutral-500">mollie</span>
-                  </span>
-                </div>
               </div>
             </div>
           </div>
