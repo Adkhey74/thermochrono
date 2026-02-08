@@ -12,6 +12,8 @@ export interface CheckoutItem {
 export interface CheckoutBody {
   items: CheckoutItem[]
   discountAmount?: number
+  /** Token carte (Mollie Components) pour paiement intégré sur le site */
+  cardToken?: string
 }
 
 export async function POST(request: Request) {
@@ -44,7 +46,7 @@ export async function POST(request: Request) {
     )
   }
 
-  const { items, discountAmount = 0 } = body
+  const { items, discountAmount = 0, cardToken } = body
 
   if (!items?.length || !Array.isArray(items)) {
     return NextResponse.json(
@@ -64,20 +66,25 @@ export async function POST(request: Request) {
       ? items[0].name
       : `Commande ${items.length} articles`
 
+  const createParams: Parameters<typeof mollieClient.payments.create>[0] = {
+    amount: {
+      value: amountStr,
+      currency: "EUR",
+    },
+    description,
+    redirectUrl: `${baseUrl}/commande/success`,
+    webhookUrl: `${baseUrl}/api/webhooks/mollie`,
+    metadata: {
+      itemCount: String(items.length),
+      discount: String(discountAmount),
+    },
+    ...(cardToken && typeof cardToken === "string" && cardToken.trim()
+      ? { method: "creditcard" as const, cardToken: cardToken.trim() }
+      : {}),
+  }
+
   try {
-    const payment = await mollieClient.payments.create({
-      amount: {
-        value: amountStr,
-        currency: "EUR",
-      },
-      description,
-      redirectUrl: `${baseUrl}/commande/success`,
-      webhookUrl: `${baseUrl}/api/webhooks/mollie`,
-      metadata: {
-        itemCount: String(items.length),
-        discount: String(discountAmount),
-      },
-    })
+    const payment = await mollieClient.payments.create(createParams)
 
     const checkoutUrl = payment.getCheckoutUrl()
     if (!checkoutUrl) {

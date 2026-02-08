@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { useCartStore } from "@/store/cart-store"
 import { Button } from "@/components/ui/button"
@@ -15,7 +16,10 @@ import { ChevronRight } from "lucide-react"
 import { getPromoByCode, applyPromo, type PromoCode } from "@/lib/promo-codes"
 import { getProductDisplay } from "@/lib/i18n/product-display"
 
+const CHECKOUT_DISCOUNT_KEY = "checkoutDiscount"
+
 export default function CartPage() {
+  const router = useRouter()
   const { items, removeItem, updateQuantity, totalItems, totalPrice } = useCartStore()
   const { t } = useI18n()
   const [promoInput, setPromoInput] = useState("")
@@ -45,41 +49,15 @@ export default function CartPage() {
     setPromoError(null)
   }
 
-  const handleCheckout = async () => {
+  const handleCheckout = () => {
     setCheckoutError(null)
     setCheckoutLoading(true)
     try {
-      const checkoutItems = items
-        .map((item) => {
-          const p = getProductById(item.productId)
-          const v = p && getVariant(p, item.variantId)
-          if (!p || !v) return null
-          const display = getProductDisplay(p, t, v)
-          return {
-            productId: p.id,
-            name: display.color ? `${display.name} — ${display.color}` : display.name,
-            price: v.price,
-            quantity: item.quantity,
-            image: v.images[0] ?? "",
-          }
-        })
-        .filter(Boolean) as { productId: string; name: string; price: number; quantity: number; image: string }[]
-      const res = await fetch("/api/checkout/session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: checkoutItems, discountAmount: discount }),
-      })
-      const data = await res.json()
-      if (!res.ok) {
-        throw new Error(data.error || (t("cart.checkoutError") as string))
-      }
-      if (data.url) {
-        window.location.href = data.url
-        return
-      }
-      throw new Error(t("cart.checkoutError") as string)
-    } catch (err) {
-      setCheckoutError(err instanceof Error ? err.message : (t("cart.checkoutError") as string))
+      sessionStorage.setItem(CHECKOUT_DISCOUNT_KEY, JSON.stringify({ discount }))
+      router.push("/checkout")
+    } catch {
+      setCheckoutError(t("cart.checkoutError") as string)
+    } finally {
       setCheckoutLoading(false)
     }
   }
