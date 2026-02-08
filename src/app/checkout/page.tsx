@@ -282,7 +282,7 @@ export default function CheckoutPage() {
                     type="submit"
                     size="lg"
                     className="w-full min-h-[52px] text-base font-semibold rounded-xl touch-manipulation shadow-sm"
-                    disabled={payLoading || !profileId || (profileId && !scriptReady)}
+                    disabled={payLoading || !profileId || !scriptReady}
                   >
                     {payLoading
                       ? (t("checkout.paying") as string)
