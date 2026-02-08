@@ -10,7 +10,7 @@ import { useI18n } from "@/lib/i18n/context"
 import { getProductById, getVariant } from "@/data/products"
 import { getProductDisplay } from "@/lib/i18n/product-display"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft } from "lucide-react"
+import { ChevronLeft, Loader2 } from "lucide-react"
 import { loadShipping, hasValidShipping } from "@/lib/checkout-shipping"
 
 const CHECKOUT_DISCOUNT_KEY = "checkoutDiscount"
@@ -138,6 +138,7 @@ export default function CheckoutPage() {
       ? checkoutItems[0].name
       : `${checkoutItems.length} ${(t("cart.items") as string).toLowerCase()}`
 
+  // Montage du formulaire carte Mollie : attente de Mollie + layout, avec retries
   useEffect(() => {
     if (!scriptReady || !profileId || !containerReady || typeof window === "undefined") return
     setMollieError(null)
@@ -145,38 +146,59 @@ export default function CheckoutPage() {
     const el = cardRef.current
     if (!el) return
 
-    const M = (window as unknown as { Mollie?: (id: string, o?: { locale?: string }) => unknown }).Mollie
-    if (!M) {
-      setMollieError("Mollie.js non chargé.")
-      return
-    }
+    let cancelled = false
+    const timeouts: ReturnType<typeof setTimeout>[] = []
 
-    const mount = () => {
-      try {
-        const mollie = M(profileId, { locale: mollieLocaleMap[locale] ?? "fr_FR" }) as {
-          createComponent: (type: string, options?: { styles?: typeof mollieComponentStyles }) => { mount: (target: string | HTMLElement) => void }
-          createToken: () => Promise<{ token?: string; error?: { message: string } }>
+    const tryMount = (attempt = 0) => {
+      if (cancelled) return
+      const M = (window as unknown as { Mollie?: (id: string, o?: { locale?: string }) => unknown }).Mollie
+      if (!M) {
+        if (attempt < 8) {
+          timeouts.push(setTimeout(() => tryMount(attempt + 1), 150 + attempt * 100))
+        } else {
+          setMollieError("Mollie.js non chargé.")
         }
-        mollieRef.current = mollie
-        try {
-          const cardComponent = mollie.createComponent("card", { styles: mollieComponentStyles })
-          cardComponent.mount(el)
-        } catch {
-          const cardComponent = mollie.createComponent("card")
-          cardComponent.mount(el)
-        }
-        setMollieMounted(true)
-      } catch (err) {
-        const msg = err instanceof Error ? err.message : "Erreur Mollie"
-        setMollieError(msg)
+        return
       }
+      // Attendre que le conteneur soit peint (dimensions disponibles) avant mount
+      requestAnimationFrame(() => {
+        if (cancelled) return
+        requestAnimationFrame(() => {
+          if (cancelled) return
+          const container = cardRef.current
+          if (!container) return
+          try {
+            const mollie = M(profileId, { locale: mollieLocaleMap[locale] ?? "fr_FR" }) as {
+              createComponent: (type: string, options?: { styles?: typeof mollieComponentStyles }) => { mount: (target: string | HTMLElement) => void }
+              createToken: () => Promise<{ token?: string; error?: { message: string } }>
+            }
+            mollieRef.current = mollie
+            try {
+              const cardComponent = mollie.createComponent("card", { styles: mollieComponentStyles })
+              cardComponent.mount(container)
+            } catch {
+              const cardComponent = mollie.createComponent("card")
+              cardComponent.mount(container)
+            }
+            if (!cancelled) setMollieMounted(true)
+          } catch (err) {
+            if (!cancelled) {
+              const msg = err instanceof Error ? err.message : "Erreur Mollie"
+              setMollieError(msg)
+            }
+          }
+        })
+      })
     }
 
-    const t = setTimeout(mount, 200)
-    const timeoutId = setTimeout(() => setLoadTimeout(true), 8000)
+    const firstDelay = setTimeout(() => tryMount(0), 100)
+    timeouts.push(firstDelay)
+    const loadTimeoutId = setTimeout(() => setLoadTimeout(true), 8000)
+
     return () => {
-      clearTimeout(t)
-      clearTimeout(timeoutId)
+      cancelled = true
+      timeouts.forEach(clearTimeout)
+      clearTimeout(loadTimeoutId)
       mollieRef.current = null
       setMollieMounted(false)
     }
@@ -335,6 +357,8 @@ export default function CheckoutPage() {
     )
   }
 
+  const checkoutReady = !profileId || mollieMounted || scriptError || mollieError
+
   return (
     <>
       <Script
@@ -343,6 +367,23 @@ export default function CheckoutPage() {
         onLoad={() => setScriptReady(true)}
         onError={() => setScriptError(true)}
       />
+
+      {/* Overlay : la page checkout ne s'affiche que quand tout est prêt */}
+      {!checkoutReady && (
+        <div
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center min-h-screen"
+          style={{
+            background: "linear-gradient(135deg, #f5f3ff 0%, #e0e7ff 50%, #dbeafe 100%)",
+          }}
+          aria-live="polite"
+          aria-busy="true"
+        >
+          <Loader2 className="h-10 w-10 animate-spin text-indigo-600 mb-4" aria-hidden />
+          <p className="text-neutral-600 font-medium">
+            {t("checkout.loading") as string}
+          </p>
+        </div>
+      )}
 
       <div className="min-h-full flex flex-col">
         <main className="flex-1 w-full py-6 px-4 sm:py-8 md:py-12">
