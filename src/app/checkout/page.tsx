@@ -10,7 +10,7 @@ import { useI18n } from "@/lib/i18n/context"
 import { getProductById, getVariant } from "@/data/products"
 import { getProductDisplay } from "@/lib/i18n/product-display"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, Loader2 } from "lucide-react"
+import { ChevronLeft, Loader2, Lock, Check, Package, Shield, CreditCard } from "lucide-react"
 import { loadShipping, hasValidShipping } from "@/lib/checkout-shipping"
 
 const CHECKOUT_DISCOUNT_KEY = "checkoutDiscount"
@@ -592,6 +592,30 @@ export default function CheckoutPage() {
                       >
                         {payLoading ? (t("checkout.paying") as string) : (t("checkout.payButton") as string)}
                       </Button>
+
+                      {/* Réassurance */}
+                      <div className="mt-6 pt-5 border-t border-neutral-100 space-y-3">
+                        <div className="flex items-center gap-2 text-sm text-neutral-600">
+                          <Lock className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden />
+                          <span>{t("checkout.reassuranceSecure") as string}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-neutral-600">
+                          <Check className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden />
+                          <span>{t("checkout.reassuranceGuarantee") as string}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-neutral-600">
+                          <Package className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden />
+                          <span>{t("checkout.reassuranceDelivery") as string}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-neutral-600">
+                          <CreditCard className="h-4 w-4 shrink-0 text-neutral-500" aria-hidden />
+                          <span>{t("checkout.reassuranceCards") as string}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-neutral-600">
+                          <Shield className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden />
+                          <span>{t("checkout.reassuranceSsl") as string}</span>
+                        </div>
+                      </div>
                     </form>
                   </div>
                   <p className="mt-6 pt-5 border-t border-neutral-100 text-xs text-neutral-400">
