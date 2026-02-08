@@ -69,6 +69,15 @@ export default function CheckoutPage() {
     }
   }, [router])
 
+  // Au démontage (retour arrière, navigation), réinitialiser containerReady pour que
+  // le formulaire Mollie se remonte correctement quand on revient sur la page.
+  useEffect(() => {
+    return () => {
+      setContainerReady(false)
+      setMollieMounted(false)
+    }
+  }, [])
+
   const checkoutItems = items
     .map((item) => {
       const p = getProductById(item.productId)
