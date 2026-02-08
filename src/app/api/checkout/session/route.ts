@@ -66,7 +66,7 @@ export async function POST(request: Request) {
       ? items[0].name
       : `Commande ${items.length} articles`
 
-  const createParams: Parameters<typeof mollieClient.payments.create>[0] = {
+  const baseParams = {
     amount: {
       value: amountStr,
       currency: "EUR",
@@ -78,13 +78,17 @@ export async function POST(request: Request) {
       itemCount: String(items.length),
       discount: String(discountAmount),
     },
-    ...(cardToken && typeof cardToken === "string" && cardToken.trim()
-      ? { method: "creditcard" as const, cardToken: cardToken.trim() }
-      : {}),
   }
 
+  const createParams =
+    cardToken && typeof cardToken === "string" && cardToken.trim()
+      ? { ...baseParams, method: "creditcard", cardToken: cardToken.trim() }
+      : baseParams
+
   try {
-    const payment = await mollieClient.payments.create(createParams)
+    const payment = await mollieClient.payments.create(
+      createParams as Parameters<typeof mollieClient.payments.create>[0]
+    )
 
     const checkoutUrl = payment.getCheckoutUrl()
     if (!checkoutUrl) {
