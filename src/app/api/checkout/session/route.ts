@@ -1,6 +1,26 @@
 import { NextResponse } from "next/server"
 import createMollieClient from "@mollie/api-client"
 
+/** Normalise le numéro au format E.164 attendu par Mollie (+countryCode + chiffres, max 15). Retourne null si invalide. */
+function normalizePhoneE164(phone: string, countryCode: string): string | null {
+  const raw = String(phone).trim().replace(/\s/g, "")
+  if (!raw) return null
+  let digits = raw.replace(/\D/g, "")
+  const withPlus = raw.startsWith("+")
+  if (withPlus) {
+    if (digits.length < 10 || digits.length > 15) return null
+    return `+${digits}`
+  }
+  const countryDial: Record<string, string> = { FR: "33", BE: "32", NL: "31", DE: "49", ES: "34", IT: "39", LU: "352", CH: "41" }
+  const dial = countryDial[countryCode.toUpperCase().slice(0, 2)] ?? "33"
+  if (dial === "33" && digits.startsWith("0")) digits = digits.slice(1)
+  if (dial === "32" && digits.startsWith("0")) digits = digits.slice(1)
+  if (digits.length < 9 || digits.length > 12) return null
+  const e164 = `+${dial}${digits}`
+  if (e164.length > 16) return null
+  return e164
+}
+
 export interface CheckoutItem {
   productId: string
   name: string
@@ -99,16 +119,18 @@ export async function POST(request: Request) {
   if (shippingAddress && typeof shippingAddress === "object") {
     const { givenName, familyName, email, phone, streetAndNumber, streetAdditional, postalCode, city, country } = shippingAddress
     if (streetAndNumber && city && country) {
+      const countryIso = String(country).trim().toUpperCase().slice(0, 2)
+      const phoneE164 = phone ? normalizePhoneE164(phone, countryIso) : null
       baseParams.shippingAddress = {
         ...(givenName && { givenName }),
         ...(familyName && { familyName }),
         ...(email && { email }),
-        ...(phone && { phone }),
+        ...(phoneE164 && { phone: phoneE164 }),
         streetAndNumber: String(streetAndNumber).trim(),
         ...(streetAdditional && { streetAdditional: String(streetAdditional).trim() }),
         ...(postalCode && { postalCode: String(postalCode).trim() }),
         city: String(city).trim(),
-        country: String(country).trim().toUpperCase().slice(0, 2),
+        country: countryIso,
       }
     }
   }
