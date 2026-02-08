@@ -40,6 +40,9 @@ export default function CheckoutPage() {
   const cardRef = useRef<HTMLDivElement>(null)
   const mollieRef = useRef<{ createToken: () => Promise<{ token?: string; error?: { message: string } }> } | null>(null)
   const [scriptReady, setScriptReady] = useState(false)
+  const [scriptError, setScriptError] = useState(false)
+  const [mollieMounted, setMollieMounted] = useState(false)
+  const [mollieError, setMollieError] = useState<string | null>(null)
   const [payLoading, setPayLoading] = useState(false)
   const [payError, setPayError] = useState<string | null>(null)
   const [discountAmount, setDiscountAmount] = useState(0)
@@ -81,18 +84,43 @@ export default function CheckoutPage() {
       : `${checkoutItems.length} ${(t("cart.items") as string).toLowerCase()}`
 
   useEffect(() => {
-    if (!scriptReady || !profileId || !cardRef.current || typeof window === "undefined") return
+    if (!scriptReady || !profileId || typeof window === "undefined") return
+    setMollieError(null)
+    const el = cardRef.current
+    if (!el) return
+
     const M = (window as unknown as { Mollie?: (id: string, o?: { locale?: string }) => unknown }).Mollie
-    if (!M) return
-    const mollie = M(profileId, { locale: mollieLocaleMap[locale] ?? "fr_FR" }) as {
-      createComponent: (type: string, options?: { styles?: typeof mollieComponentStyles }) => { mount: (el: string | HTMLElement) => void }
-      createToken: () => Promise<{ token?: string; error?: { message: string } }>
+    if (!M) {
+      setMollieError("Mollie.js non chargé.")
+      return
     }
-    mollieRef.current = mollie
-    const cardComponent = mollie.createComponent("card", { styles: mollieComponentStyles })
-    cardComponent.mount(cardRef.current)
+
+    const mount = () => {
+      try {
+        const mollie = M(profileId, { locale: mollieLocaleMap[locale] ?? "fr_FR" }) as {
+          createComponent: (type: string, options?: { styles?: typeof mollieComponentStyles }) => { mount: (target: string | HTMLElement) => void }
+          createToken: () => Promise<{ token?: string; error?: { message: string } }>
+        }
+        mollieRef.current = mollie
+        try {
+          const cardComponent = mollie.createComponent("card", { styles: mollieComponentStyles })
+          cardComponent.mount(el)
+        } catch {
+          const cardComponent = mollie.createComponent("card")
+          cardComponent.mount(el)
+        }
+        setMollieMounted(true)
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : "Erreur Mollie"
+        setMollieError(msg)
+      }
+    }
+
+    const t = setTimeout(mount, 100)
     return () => {
+      clearTimeout(t)
       mollieRef.current = null
+      setMollieMounted(false)
     }
   }, [scriptReady, profileId, locale])
 
@@ -149,6 +177,7 @@ export default function CheckoutPage() {
         src="https://js.mollie.com/v1/mollie.js"
         strategy="afterInteractive"
         onLoad={() => setScriptReady(true)}
+        onError={() => setScriptError(true)}
       />
 
       {/* Fond : image très adoucie, overlay sombre */}
@@ -202,11 +231,34 @@ export default function CheckoutPage() {
                   {profileId ? (
                     <div
                       ref={cardRef}
-                      className="checkout-mollie-card rounded-xl bg-neutral-50 border border-neutral-200 p-6 min-h-[240px]"
-                    />
+                      className="checkout-mollie-card rounded-xl bg-neutral-50 border border-neutral-200 p-6 min-h-[240px] relative"
+                    >
+                      {scriptError && (
+                        <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-neutral-100 p-6 text-center">
+                          <p className="text-sm text-red-600">Impossible de charger le formulaire de paiement. Vérifiez votre connexion ou désactivez les bloqueurs de publicité.</p>
+                        </div>
+                      )}
+                      {!scriptError && mollieError && (
+                        <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-neutral-100 p-6 text-center">
+                          <p className="text-sm text-red-600">{mollieError}</p>
+                          <p className="mt-2 text-xs text-neutral-500">Vérifiez que NEXT_PUBLIC_MOLLIE_PROFILE_ID est l’ID de profil (pfl_xxx) dans le dashboard Mollie.</p>
+                        </div>
+                      )}
+                      {!scriptError && !mollieError && !mollieMounted && scriptReady && (
+                        <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-neutral-100/80 p-6 text-center">
+                          <p className="text-sm text-neutral-500">Chargement du formulaire de paiement…</p>
+                        </div>
+                      )}
+                      {!scriptError && !mollieError && !scriptReady && (
+                        <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-neutral-100/80 p-6 text-center">
+                          <p className="text-sm text-neutral-500">Chargement du formulaire de paiement…</p>
+                        </div>
+                      )}
+                    </div>
                   ) : (
                     <div className="rounded-xl bg-neutral-50 border border-neutral-200 border-dashed p-8 text-center">
                       <p className="text-sm text-neutral-500">{t("checkout.paymentFormUnavailable") as string}</p>
+                      <p className="mt-2 text-xs text-neutral-500">Ajoutez NEXT_PUBLIC_MOLLIE_PROFILE_ID (ID profil pfl_xxx) dans .env.local</p>
                     </div>
                   )}
                 </div>
