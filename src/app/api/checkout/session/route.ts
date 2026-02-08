@@ -26,6 +26,8 @@ export interface CheckoutBody {
   discountAmount?: number
   /** Token carte (Mollie Components) pour paiement intégré sur le site */
   cardToken?: string
+  /** Token Apple Pay (JSON string) pour paiement Apple Pay */
+  applePayPaymentToken?: string
   /** Adresse de livraison (étape avant paiement) */
   shippingAddress?: ShippingAddress
 }
@@ -60,7 +62,7 @@ export async function POST(request: Request) {
     )
   }
 
-  const { items, discountAmount = 0, cardToken, shippingAddress } = body
+  const { items, discountAmount = 0, cardToken, applePayPaymentToken, shippingAddress } = body
 
   if (!items?.length || !Array.isArray(items)) {
     return NextResponse.json(
@@ -111,10 +113,12 @@ export async function POST(request: Request) {
     }
   }
 
-  const createParams =
-    cardToken && typeof cardToken === "string" && cardToken.trim()
-      ? { ...baseParams, method: "creditcard", cardToken: cardToken.trim() }
-      : baseParams
+  let createParams: Record<string, unknown> = baseParams
+  if (applePayPaymentToken && typeof applePayPaymentToken === "string" && applePayPaymentToken.trim()) {
+    createParams = { ...baseParams, method: "applepay", applePayPaymentToken: applePayPaymentToken.trim() }
+  } else if (cardToken && typeof cardToken === "string" && cardToken.trim()) {
+    createParams = { ...baseParams, method: "creditcard", cardToken: cardToken.trim() }
+  }
 
   try {
     const payment = await mollieClient.payments.create(

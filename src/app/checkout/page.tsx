@@ -15,6 +15,23 @@ import { loadShipping, hasValidShipping } from "@/lib/checkout-shipping"
 
 const CHECKOUT_DISCOUNT_KEY = "checkoutDiscount"
 
+interface ApplePayPaymentRequest {
+  countryCode: string
+  currencyCode: string
+  supportedNetworks: string[]
+  merchantCapabilities: string[]
+  total: { label: string; amount: string }
+}
+interface ApplePaySessionType {
+  begin(): void
+  abort(): void
+  completeMerchantValidation(merchantSession: unknown): void
+  completePayment(status: number): void
+  onvalidatemerchant?: (event: { validationURL: string }) => void
+  onpaymentauthorized?: (event: { payment: { token: unknown } }) => void
+  oncancel?: () => void
+}
+
 const mollieLocaleMap: Record<string, string> = {
   fr: "fr_FR",
   en: "en_GB",
@@ -48,6 +65,8 @@ export default function CheckoutPage() {
   const [loadTimeout, setLoadTimeout] = useState(false)
   const [payLoading, setPayLoading] = useState(false)
   const [payError, setPayError] = useState<string | null>(null)
+  const [applePayAvailable, setApplePayAvailable] = useState(false)
+  const [applePayLoading, setApplePayLoading] = useState(false)
   const [discountAmount, setDiscountAmount] = useState(0)
   const [shippingAddress, setShippingAddress] = useState<ReturnType<typeof loadShipping> | null>(null)
 
@@ -75,6 +94,21 @@ export default function CheckoutPage() {
     return () => {
       setContainerReady(false)
       setMollieMounted(false)
+    }
+  }, [])
+
+  // Vérifier si Apple Pay est disponible (Safari / iOS)
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    const ApplePaySession = (window as unknown as { ApplePaySession?: unknown }).ApplePaySession
+    if (!ApplePaySession || typeof (ApplePaySession as { canMakePayments?: () => boolean | Promise<boolean> }).canMakePayments !== "function") {
+      return
+    }
+    const check = (ApplePaySession as { canMakePayments: () => boolean | Promise<boolean> }).canMakePayments()
+    if (typeof check === "boolean") {
+      setApplePayAvailable(check)
+    } else {
+      void (check as Promise<boolean>).then(setApplePayAvailable)
     }
   }, [])
 
@@ -147,6 +181,84 @@ export default function CheckoutPage() {
       setMollieMounted(false)
     }
   }, [scriptReady, profileId, locale, containerReady])
+
+  const handleApplePay = () => {
+    if (!shippingAddress || applePayLoading || payLoading) return
+    if (typeof window === "undefined" || !window.ApplePaySession) return
+    setPayError(null)
+    setApplePayLoading(true)
+    const request: ApplePayPaymentRequest = {
+      countryCode: "FR",
+      currencyCode: "EUR",
+      supportedNetworks: ["visa", "masterCard", "amex", "maestro", "cartesBancaires"],
+      merchantCapabilities: ["supports3DS"],
+      total: {
+        label: checkoutItems.length === 1 ? checkoutItems[0].name : (t("cart.summary") as string),
+        amount: total.toFixed(2),
+      },
+    }
+    const AP = (window as unknown as { ApplePaySession: new (v: number, r: ApplePayPaymentRequest) => ApplePaySessionType }).ApplePaySession
+    const session = new AP(3, request)
+    session.onvalidatemerchant = async (event: { validationURL: string }) => {
+      try {
+        const res = await fetch("/api/checkout/apple-pay-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ validationUrl: event.validationURL }),
+        })
+        const merchantSession = await res.json()
+        if (!res.ok) throw new Error(merchantSession.error ?? "Validation échouée")
+        session.completeMerchantValidation(merchantSession)
+      } catch (err) {
+        session.abort()
+        setPayError(err instanceof Error ? err.message : "Apple Pay indisponible")
+        setApplePayLoading(false)
+      }
+    }
+    session.onpaymentauthorized = async (event: { payment: { token: unknown } }) => {
+      try {
+        const tokenString = JSON.stringify(event.payment.token)
+        const res = await fetch("/api/checkout/session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            items: checkoutItems,
+            discountAmount,
+            applePayPaymentToken: tokenString,
+            shippingAddress: {
+              givenName: shippingAddress.firstName.trim(),
+              familyName: shippingAddress.lastName.trim(),
+              email: shippingAddress.email.trim(),
+              phone: shippingAddress.phone.trim() || undefined,
+              streetAndNumber: shippingAddress.streetAndNumber.trim(),
+              streetAdditional: shippingAddress.streetAdditional.trim() || undefined,
+              postalCode: shippingAddress.postalCode.trim(),
+              city: shippingAddress.city.trim(),
+              country: shippingAddress.country.trim().toUpperCase().slice(0, 2),
+            },
+          }),
+        })
+        const data = await res.json()
+        if (!res.ok) {
+          session.completePayment(1)
+          throw new Error(data.error ?? (t("cart.checkoutError") as string))
+        }
+        if (data.url) {
+          session.completePayment(0)
+          window.location.href = data.url
+          return
+        }
+        session.completePayment(1)
+        throw new Error(t("cart.checkoutError") as string)
+      } catch (err) {
+        session.completePayment(1)
+        setPayError(err instanceof Error ? err.message : (t("cart.checkoutError") as string))
+        setApplePayLoading(false)
+      }
+    }
+    session.oncancel = () => setApplePayLoading(false)
+    session.begin()
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -312,6 +424,32 @@ export default function CheckoutPage() {
                     </Link>
 
                     <form onSubmit={handleSubmit} className="flex flex-col flex-1">
+                      {applePayAvailable && (
+                        <>
+                          <button
+                            type="button"
+                            onClick={handleApplePay}
+                            disabled={applePayLoading || payLoading}
+                            className="w-full min-h-[52px] rounded-lg border-0 cursor-pointer flex items-center justify-center gap-2 bg-black text-white font-medium text-[17px] hover:opacity-90 disabled:opacity-50 transition-opacity touch-manipulation"
+                            style={{
+                              WebkitAppearance: "-apple-pay-button",
+                              appearance: "-apple-pay-button",
+                            }}
+                          >
+                            <span className="inline-block w-5 h-5 shrink-0" aria-hidden>
+                              <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full">
+                                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
+                              </svg>
+                            </span>
+                            {applePayLoading ? (t("checkout.paying") as string) : (t("cart.payWithApplePay") as string)}
+                          </button>
+                          <div className="flex items-center gap-3 my-4">
+                            <div className="flex-1 h-px bg-neutral-200" />
+                            <span className="text-sm text-neutral-500">Ou</span>
+                            <div className="flex-1 h-px bg-neutral-200" />
+                          </div>
+                        </>
+                      )}
                       {profileId ? (
                         <div
                           ref={(el) => {
@@ -328,18 +466,6 @@ export default function CheckoutPage() {
                           {!scriptError && mollieError && (
                             <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-neutral-100 p-6 text-center">
                               <p className="text-sm text-red-600">{mollieError}</p>
-                            </div>
-                          )}
-                          {!scriptError && !mollieError && !mollieMounted && (
-                            <div className="absolute inset-0 flex flex-col items-center justify-center rounded-lg bg-neutral-50 p-6 text-center">
-                              <p className="text-sm text-neutral-500">Chargement du formulaire de paiement...</p>
-                              {(loadTimeout || profileIdLooksWrong) && (
-                                <p className="mt-2 text-xs text-neutral-400 max-w-[260px]">
-                                  {profileIdLooksWrong
-                                    ? "Vérifiez NEXT_PUBLIC_MOLLIE_PROFILE_ID (ID pfl_xxx)."
-                                    : "Affichage en cours..."}
-                                </p>
-                              )}
                             </div>
                           )}
                         </div>
