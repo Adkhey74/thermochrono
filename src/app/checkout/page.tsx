@@ -182,11 +182,25 @@ export default function CheckoutPage() {
               createToken: () => Promise<{ token?: string; error?: { message: string } }>
             }
             mollieRef.current = mollie
-            try {
-              const cardComponent = mollie.createComponent("card", { styles: mollieComponentStyles })
-              cardComponent.mount(container)
-            } catch {
-              const cardComponent = mollie.createComponent("card")
+            const opts = { styles: mollieComponentStyles }
+            const cardNumberEl = container.querySelector("[data-mollie=cardNumber]")
+            const cardHolderEl = container.querySelector("[data-mollie=cardHolder]")
+            const expiryEl = container.querySelector("[data-mollie=expiryDate]")
+            const cvcEl = container.querySelector("[data-mollie=verificationCode]")
+            if (cardNumberEl && cardHolderEl && expiryEl && cvcEl) {
+              try {
+                mollie.createComponent("cardNumber", opts).mount(cardNumberEl as HTMLElement)
+                mollie.createComponent("cardHolder", opts).mount(cardHolderEl as HTMLElement)
+                mollie.createComponent("expiryDate", opts).mount(expiryEl as HTMLElement)
+                mollie.createComponent("verificationCode", opts).mount(cvcEl as HTMLElement)
+              } catch {
+                mollie.createComponent("cardNumber").mount(cardNumberEl as HTMLElement)
+                mollie.createComponent("cardHolder").mount(cardHolderEl as HTMLElement)
+                mollie.createComponent("expiryDate").mount(expiryEl as HTMLElement)
+                mollie.createComponent("verificationCode").mount(cvcEl as HTMLElement)
+              }
+            } else {
+              const cardComponent = mollie.createComponent("card", opts)
               cardComponent.mount(container)
             }
             if (!cancelled) setMollieMounted(true)
@@ -506,18 +520,44 @@ export default function CheckoutPage() {
                             (cardRef as React.MutableRefObject<HTMLDivElement | null>).current = el
                             setContainerReady(!!el)
                           }}
-                          className="checkout-mollie-card rounded-lg border border-neutral-200 bg-neutral-50/50 p-4 min-h-[200px] sm:min-h-[220px] relative"
+                          className="checkout-mollie-card rounded-lg border border-neutral-200 bg-neutral-50/50 p-4 min-h-[200px] sm:min-h-[220px] relative space-y-4"
                         >
                           {scriptError && (
-                            <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-neutral-100 p-6 text-center">
+                            <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-neutral-100 p-6 text-center z-10">
                               <p className="text-sm text-red-600">Impossible de charger le formulaire de paiement.</p>
                             </div>
                           )}
                           {!scriptError && mollieError && (
-                            <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-neutral-100 p-6 text-center">
+                            <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-neutral-100 p-6 text-center z-10">
                               <p className="text-sm text-red-600">{mollieError}</p>
                             </div>
                           )}
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-medium text-neutral-500 block" htmlFor="mollie-card-number">
+                              {t("checkout.placeholderCardNumber") as string}
+                            </label>
+                            <div data-mollie="cardNumber" id="mollie-card-number" className="min-h-[44px] rounded-lg border border-neutral-200 bg-white" />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-medium text-neutral-500 block" htmlFor="mollie-card-holder">
+                              {t("checkout.placeholderCardHolder") as string}
+                            </label>
+                            <div data-mollie="cardHolder" id="mollie-card-holder" className="min-h-[44px] rounded-lg border border-neutral-200 bg-white" />
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                              <label className="text-xs font-medium text-neutral-500 block" htmlFor="mollie-expiry">
+                                {t("checkout.placeholderExpiry") as string}
+                              </label>
+                              <div data-mollie="expiryDate" id="mollie-expiry" className="min-h-[44px] rounded-lg border border-neutral-200 bg-white" />
+                            </div>
+                            <div className="space-y-1.5">
+                              <label className="text-xs font-medium text-neutral-500 block" htmlFor="mollie-cvc">
+                                {t("checkout.placeholderCvc") as string}
+                              </label>
+                              <div data-mollie="verificationCode" id="mollie-cvc" className="min-h-[44px] rounded-lg border border-neutral-200 bg-white" />
+                            </div>
+                          </div>
                         </div>
                       ) : (
                         <div className="rounded-lg border border-neutral-200 border-dashed bg-neutral-50 p-8 text-center">

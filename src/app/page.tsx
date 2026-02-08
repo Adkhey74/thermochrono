@@ -4,7 +4,6 @@ import { useI18n } from "@/lib/i18n/context"
 import { Button } from "@/components/ui/button"
 import { Package, Truck, Shield, ArrowRight, Sparkles, ChevronDown, ShoppingCart } from "lucide-react"
 import Link from "next/link"
-import Image from "next/image"
 import { motion } from "framer-motion"
 import { ProductCard } from "@/components/ProductCard"
 import { ReviewsCarousel } from "@/components/ReviewsCarousel"
@@ -18,64 +17,58 @@ export default function Home() {
 
   return (
     <main>
-      {/* Hero Section - mobile: ratio 3/4, contenu allégé pour éviter le chevauchement */}
-      <section className="relative aspect-[3/4] min-h-0 sm:aspect-auto sm:min-h-[90vh] flex flex-col items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-[var(--z-base)]">
+      {/* Hero Section - image avec ses proportions réelles (hauteur/largeur), visible en entier */}
+      <section className="relative w-full">
+        <div className="relative w-full z-[var(--z-base)]">
+          <motion.img
+            src="/images/Acceuil.jpeg"
+            alt={t("common.heroImageAlt") as string}
+            className="w-full h-auto block"
+            initial={{ opacity: 0.9, scale: 1.02 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+            fetchPriority="high"
+          />
           <motion.div
-            className="absolute inset-0"
-            initial={{ scale: 1.1 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 1.5, ease: "easeOut" }}
-          >
-            <Image
-              src="/images/Acceuil.jpeg"
-              alt={t("common.heroImageAlt") as string}
-              fill
-              className="object-cover object-center"
-              sizes="100vw"
-              priority
-            />
-          </motion.div>
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-primary/30"
+            className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-primary/30 pointer-events-none"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
           />
         </div>
-        <div className="absolute inset-0 bg-black/50 z-[var(--z-content)]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/70 z-[var(--z-content)]" />
-        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-20 lg:py-28 z-[var(--z-above-content)] flex-1 flex items-center min-h-0">
-          <div className="max-w-3xl mx-auto text-center w-full">
+        <div className="absolute inset-0 bg-black/45 z-[var(--z-content)] sm:bg-black/50 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-transparent to-black/65 z-[var(--z-content)] sm:from-black/60 sm:to-black/70 pointer-events-none" />
+        <div className="absolute inset-0 container mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-20 lg:py-28 z-[var(--z-above-content)] flex items-center justify-center min-h-0 overflow-hidden">
+          <div className="max-w-3xl mx-auto text-center w-full flex flex-col items-center justify-center min-h-0 py-1">
             <motion.span
-              className="inline-flex items-center gap-2 rounded-full border border-white/40 bg-white/15 px-3 py-1.5 text-xs sm:text-sm font-semibold text-white backdrop-blur-md mb-2 sm:mb-8 shadow-lg"
-              initial={{ opacity: 0, y: 20 }}
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/40 bg-white/15 px-2.5 py-1 text-[10px] sm:text-sm font-semibold text-white backdrop-blur-md mb-1 sm:mb-8 shadow-lg shrink-0"
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               whileHover={{ scale: 1.03 }}
             >
-              <Sparkles className="h-4 w-4 text-amber-200" />
+              <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 text-amber-200" />
               {t("home.badgeBrand") as string}
             </motion.span>
             <motion.h1
-              className="text-2xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight tracking-tight text-white mb-1.5 sm:mb-5 break-words [text-shadow:_0_2px_24px_rgb(0_0_0_/_60%)]"
-              initial={{ opacity: 0, y: 24 }}
+              className="text-lg sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight tracking-tight text-white mb-0.5 sm:mb-5 break-words [text-shadow:_0_2px_24px_rgb(0_0_0_/_60%)] line-clamp-3 sm:line-clamp-none"
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.15 }}
             >
               {t("home.title") as string}
             </motion.h1>
             <motion.p
-              className="text-sm sm:text-2xl lg:text-3xl text-white/95 font-medium mb-1 sm:mb-1 [text-shadow:_0_1px_12px_rgb(0_0_0_/_50%)]"
-              initial={{ opacity: 0, y: 20 }}
+              className="text-xs sm:text-2xl lg:text-3xl text-white/95 font-medium mb-0.5 sm:mb-1 [text-shadow:_0_1px_12px_rgb(0_0_0_/_50%)] line-clamp-2 sm:line-clamp-none"
+              initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
               {t("home.subtitle") as string}
             </motion.p>
             <motion.p
-              className="text-xs sm:text-xl text-white/90 mb-3 sm:mb-10 [text-shadow:_0_1px_10px_rgb(0_0_0_/_50%)]"
-              initial={{ opacity: 0, y: 16 }}
+              className="text-[10px] sm:text-xl text-white/90 mb-1.5 sm:mb-10 [text-shadow:_0_1px_10px_rgb(0_0_0_/_50%)] line-clamp-1 sm:line-clamp-none"
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
@@ -84,28 +77,28 @@ export default function Home() {
               </span>
             </motion.p>
             <motion.div
-              className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4"
-              initial={{ opacity: 0, y: 20 }}
+              className="flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-4 shrink-0"
+              initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.5 }}
             >
               <Button
                 asChild
                 size="lg"
-                className="bg-white text-black hover:bg-white/95 min-h-[44px] h-11 px-5 sm:min-h-[48px] sm:h-12 sm:px-8 text-sm sm:text-base font-semibold rounded-xl shadow-2xl shadow-black/30 gap-2 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.5)] touch-manipulation active:scale-[0.98]"
+                className="bg-white text-black hover:bg-white/95 min-h-[40px] h-10 px-4 sm:min-h-[48px] sm:h-12 sm:px-8 text-xs sm:text-base font-semibold rounded-xl shadow-2xl shadow-black/30 gap-1.5 sm:gap-2 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.5)] touch-manipulation active:scale-[0.98]"
               >
                 <Link href={`/produit/${product.slug}`}>
                   {t("home.viewProduct") as string}
-                  <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <ArrowRight className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
                 </Link>
               </Button>
               <Button
                 asChild
                 size="lg"
-                className="min-h-[44px] h-11 px-5 sm:min-h-[48px] sm:h-12 sm:px-6 rounded-xl border-2 border-white/90 bg-white/15 text-white hover:bg-white/25 hover:border-white hover:text-white backdrop-blur-md transition-all duration-300 font-semibold shadow-lg hover:scale-[1.02] gap-2 touch-manipulation active:scale-[0.98] text-sm sm:text-base"
+                className="min-h-[40px] h-10 px-4 sm:min-h-[48px] sm:h-12 sm:px-6 rounded-xl border-2 border-white/90 bg-white/15 text-white hover:bg-white/25 hover:border-white hover:text-white backdrop-blur-md transition-all duration-300 font-semibold shadow-lg hover:scale-[1.02] gap-1.5 sm:gap-2 touch-manipulation active:scale-[0.98] text-xs sm:text-base"
               >
                 <Link href="/panier" className="inline-flex items-center gap-2">
-                  <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <ShoppingCart className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
                   {t("header.cart") as string}
                 </Link>
               </Button>
@@ -143,18 +136,18 @@ export default function Home() {
         {/* Indicateur de scroll */}
         <motion.a
           href="#featured"
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[var(--z-above-content)] flex flex-col items-center gap-1 text-white/80 hover:text-white transition-colors min-h-[44px] justify-center pb-[env(safe-area-inset-bottom,0)]"
-          initial={{ opacity: 0, y: -10 }}
+          className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[var(--z-above-content)] flex flex-col items-center gap-0.5 text-white/80 hover:text-white transition-colors min-h-[32px] justify-center pb-[env(safe-area-inset-bottom,0)] sm:bottom-6 sm:gap-1 sm:min-h-[44px]"
+          initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1 }}
           aria-label={t("home.scrollDiscover") as string}
         >
-          <span className="text-xs font-medium">{t("home.scrollDiscover") as string}</span>
+          <span className="text-[10px] font-medium sm:text-xs">{t("home.scrollDiscover") as string}</span>
           <motion.span
-            animate={{ y: [0, 6, 0] }}
+            animate={{ y: [0, 4, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           >
-            <ChevronDown className="h-6 w-6" />
+            <ChevronDown className="h-4 w-4 sm:h-6 sm:w-6" />
           </motion.span>
         </motion.a>
       </section>
