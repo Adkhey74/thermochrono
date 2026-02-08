@@ -97,6 +97,14 @@ export default function CheckoutPage() {
     }
   }, [])
 
+  // Au retour sur la page, le script Mollie est déjà en cache : onLoad ne se redéclenche pas.
+  // On détecte window.Mollie pour débloquer scriptReady et permettre le montage.
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    const M = (window as unknown as { Mollie?: unknown }).Mollie
+    if (M) setScriptReady(true)
+  }, [])
+
   // Vérifier si Apple Pay est disponible (Safari / iOS)
   useEffect(() => {
     if (typeof window === "undefined") return
