@@ -178,7 +178,10 @@ export default function CheckoutPage() {
           const container = cardRef.current
           if (!container) return
           try {
-            const mollie = M(profileId, { locale: mollieLocaleMap[locale] ?? "fr_FR", testmode: mollieTestMode }) as {
+            const mollie = M(profileId, {
+              locale: mollieLocaleMap[locale] ?? "fr_FR",
+              testmode: mollieTestMode,
+            } as { locale?: string }) as {
               createComponent: (type: string, options?: { styles?: typeof mollieComponentStyles }) => { mount: (target: string | HTMLElement) => void }
               createToken: () => Promise<{ token?: string; error?: { message: string } }>
             }
