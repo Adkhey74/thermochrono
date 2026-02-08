@@ -184,7 +184,7 @@ export default function CheckoutPage() {
 
   const handleApplePay = () => {
     if (!shippingAddress || applePayLoading || payLoading) return
-    if (typeof window === "undefined" || !window.ApplePaySession) return
+    if (typeof window === "undefined" || !(window as unknown as { ApplePaySession?: unknown }).ApplePaySession) return
     setPayError(null)
     setApplePayLoading(true)
     const request: ApplePayPaymentRequest = {
@@ -349,6 +349,15 @@ export default function CheckoutPage() {
           <div className="max-w-5xl mx-auto">
             {/* Carte blanche type Stripe : deux colonnes sur desktop */}
             <div className="bg-white rounded-2xl shadow-xl border border-neutral-200/80 overflow-hidden">
+              <div className="flex-shrink-0 flex items-center justify-center py-5 px-6 border-b border-neutral-200">
+                <Image
+                  src="/images/logo.png"
+                  alt={t("common.brandName") as string}
+                  width={160}
+                  height={48}
+                  className="h-12 sm:h-14 w-auto object-contain"
+                />
+              </div>
               <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr] min-h-0">
                 {/* Colonne gauche : Order Summary */}
                 <div className="p-6 sm:p-8 lg:py-8 lg:px-10 border-b lg:border-b-0 lg:border-r border-neutral-200">
