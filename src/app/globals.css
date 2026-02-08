@@ -56,6 +56,8 @@
   --z-dropdown: 55;
   --z-modal-backdrop: 100;
   --z-modal: 101;
+  /* Hauteur cumulée barre promo + header (pour le hero page d'accueil) */
+  --header-area-height: 7.5rem;
   /* Premium palette noir/blanc */
   --primary: #000000;
   --primary-foreground: #FFFFFF;

@@ -17,13 +17,13 @@ export default function Home() {
 
   return (
     <main>
-      {/* Hero Section - image avec ses proportions réelles (hauteur/largeur), visible en entier */}
-      <section className="relative w-full">
-        <div className="relative w-full z-[var(--z-base)]">
+      {/* Hero Section - mobile: image en hauteur naturelle, page scrollable ; desktop: header + hero = 1 page, image en pleine largeur */}
+      <section className="relative w-full flex flex-col overflow-hidden sm:h-[calc(100dvh-var(--header-area-height,7.5rem))]">
+        <div className="relative w-full z-[var(--z-base)] block sm:flex sm:flex-1 sm:min-h-0 sm:items-center sm:justify-center">
           <motion.img
             src="/images/Acceuil.jpeg"
             alt={t("common.heroImageAlt") as string}
-            className="w-full h-auto block"
+            className="w-full h-auto block sm:h-full sm:object-cover sm:object-center"
             initial={{ opacity: 0.9, scale: 1.02 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.2, ease: "easeOut" }}
@@ -77,31 +77,41 @@ export default function Home() {
               </span>
             </motion.p>
             <motion.div
-              className="flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-4 shrink-0"
+              className="flex flex-col items-center justify-center gap-1.5 sm:gap-4 shrink-0"
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.5 }}
             >
-              <Button
-                asChild
-                size="lg"
-                className="bg-white text-black hover:bg-white/95 min-h-[40px] h-10 px-4 sm:min-h-[48px] sm:h-12 sm:px-8 text-xs sm:text-base font-semibold rounded-xl shadow-2xl shadow-black/30 gap-1.5 sm:gap-2 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.5)] touch-manipulation active:scale-[0.98]"
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-4">
+                <Button
+                  asChild
+                  size="lg"
+                  className="bg-white text-black hover:bg-white/95 min-h-[36px] h-9 px-3 text-[11px] sm:min-h-[48px] sm:h-12 sm:px-8 sm:text-base font-semibold rounded-lg sm:rounded-xl shadow-2xl shadow-black/30 gap-1 sm:gap-2 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.5)] touch-manipulation active:scale-[0.98]"
+                >
+                  <Link href={`/produit/${product.slug}`}>
+                    {t("home.viewProduct") as string}
+                    <ArrowRight className="h-3 w-3 sm:h-5 sm:w-5" />
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  size="lg"
+                  className="min-h-[36px] h-9 px-3 text-[11px] sm:min-h-[48px] sm:h-12 sm:px-6 sm:text-base rounded-lg sm:rounded-xl border-2 border-white/90 bg-white/15 text-white hover:bg-white/25 hover:border-white hover:text-white backdrop-blur-md transition-all duration-300 font-semibold shadow-lg hover:scale-[1.02] gap-1 sm:gap-2 touch-manipulation active:scale-[0.98]"
+                >
+                  <Link href="/panier" className="inline-flex items-center gap-1 sm:gap-2">
+                    <ShoppingCart className="h-3 w-3 sm:h-5 sm:w-5" />
+                    {t("header.cart") as string}
+                  </Link>
+                </Button>
+              </div>
+              <Link
+                href="#featured"
+                className="sm:hidden flex flex-col items-center gap-0.5 mt-2 text-white/80 hover:text-white transition-colors min-h-[28px] justify-center"
+                aria-label={t("home.scrollDiscover") as string}
               >
-                <Link href={`/produit/${product.slug}`}>
-                  {t("home.viewProduct") as string}
-                  <ArrowRight className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                className="min-h-[40px] h-10 px-4 sm:min-h-[48px] sm:h-12 sm:px-6 rounded-xl border-2 border-white/90 bg-white/15 text-white hover:bg-white/25 hover:border-white hover:text-white backdrop-blur-md transition-all duration-300 font-semibold shadow-lg hover:scale-[1.02] gap-1.5 sm:gap-2 touch-manipulation active:scale-[0.98] text-xs sm:text-base"
-              >
-                <Link href="/panier" className="inline-flex items-center gap-2">
-                  <ShoppingCart className="h-3.5 w-3.5 sm:h-5 sm:w-5" />
-                  {t("header.cart") as string}
-                </Link>
-              </Button>
+                <span className="text-[10px] font-medium">{t("home.scrollDiscover") as string}</span>
+                <ChevronDown className="h-3.5 w-3.5" />
+              </Link>
             </motion.div>
             <motion.p
               className="hidden sm:block mt-6"
@@ -133,21 +143,21 @@ export default function Home() {
             </motion.div>
           </div>
         </div>
-        {/* Indicateur de scroll */}
+        {/* Indicateur de scroll (desktop uniquement ; sur mobile il est sous les boutons) */}
         <motion.a
           href="#featured"
-          className="absolute bottom-2 left-1/2 -translate-x-1/2 z-[var(--z-above-content)] flex flex-col items-center gap-0.5 text-white/80 hover:text-white transition-colors min-h-[32px] justify-center pb-[env(safe-area-inset-bottom,0)] sm:bottom-6 sm:gap-1 sm:min-h-[44px]"
+          className="hidden sm:flex absolute bottom-6 left-1/2 -translate-x-1/2 z-[var(--z-above-content)] flex-col items-center gap-1 text-white/80 hover:text-white transition-colors min-h-[44px] justify-center pb-[env(safe-area-inset-bottom,0)]"
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1 }}
           aria-label={t("home.scrollDiscover") as string}
         >
-          <span className="text-[10px] font-medium sm:text-xs">{t("home.scrollDiscover") as string}</span>
+          <span className="text-xs font-medium">{t("home.scrollDiscover") as string}</span>
           <motion.span
             animate={{ y: [0, 4, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           >
-            <ChevronDown className="h-4 w-4 sm:h-6 sm:w-6" />
+            <ChevronDown className="h-6 w-6" />
           </motion.span>
         </motion.a>
       </section>
