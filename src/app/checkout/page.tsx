@@ -41,8 +41,10 @@ export default function CheckoutPage() {
   const mollieRef = useRef<{ createToken: () => Promise<{ token?: string; error?: { message: string } }> } | null>(null)
   const [scriptReady, setScriptReady] = useState(false)
   const [scriptError, setScriptError] = useState(false)
+  const [containerReady, setContainerReady] = useState(false)
   const [mollieMounted, setMollieMounted] = useState(false)
   const [mollieError, setMollieError] = useState<string | null>(null)
+  const [loadTimeout, setLoadTimeout] = useState(false)
   const [payLoading, setPayLoading] = useState(false)
   const [payError, setPayError] = useState<string | null>(null)
   const [discountAmount, setDiscountAmount] = useState(0)
@@ -77,6 +79,7 @@ export default function CheckoutPage() {
   const subtotal = totalPrice()
   const total = Math.max(0.01, subtotal - discountAmount)
   const profileId = process.env.NEXT_PUBLIC_MOLLIE_PROFILE_ID?.trim() ?? ""
+  const profileIdLooksWrong = profileId.length > 0 && !profileId.startsWith("pfl_")
 
   const orderTitle =
     checkoutItems.length === 1
@@ -84,8 +87,9 @@ export default function CheckoutPage() {
       : `${checkoutItems.length} ${(t("cart.items") as string).toLowerCase()}`
 
   useEffect(() => {
-    if (!scriptReady || !profileId || typeof window === "undefined") return
+    if (!scriptReady || !profileId || !containerReady || typeof window === "undefined") return
     setMollieError(null)
+    setLoadTimeout(false)
     const el = cardRef.current
     if (!el) return
 
@@ -116,13 +120,15 @@ export default function CheckoutPage() {
       }
     }
 
-    const t = setTimeout(mount, 100)
+    const t = setTimeout(mount, 200)
+    const timeoutId = setTimeout(() => setLoadTimeout(true), 8000)
     return () => {
       clearTimeout(t)
+      clearTimeout(timeoutId)
       mollieRef.current = null
       setMollieMounted(false)
     }
-  }, [scriptReady, profileId, locale])
+  }, [scriptReady, profileId, locale, containerReady])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -230,7 +236,10 @@ export default function CheckoutPage() {
                   </p>
                   {profileId ? (
                     <div
-                      ref={cardRef}
+                      ref={(el) => {
+                        (cardRef as React.MutableRefObject<HTMLDivElement | null>).current = el
+                        setContainerReady(!!el)
+                      }}
                       className="checkout-mollie-card rounded-xl bg-neutral-50 border border-neutral-200 p-6 min-h-[240px] relative"
                     >
                       {scriptError && (
@@ -244,14 +253,16 @@ export default function CheckoutPage() {
                           <p className="mt-2 text-xs text-neutral-500">Vérifiez que NEXT_PUBLIC_MOLLIE_PROFILE_ID est l’ID de profil (pfl_xxx) dans le dashboard Mollie.</p>
                         </div>
                       )}
-                      {!scriptError && !mollieError && !mollieMounted && scriptReady && (
-                        <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-neutral-100/80 p-6 text-center">
+                      {!scriptError && !mollieError && !mollieMounted && (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center rounded-xl bg-neutral-100/80 p-6 text-center">
                           <p className="text-sm text-neutral-500">Chargement du formulaire de paiement…</p>
-                        </div>
-                      )}
-                      {!scriptError && !mollieError && !scriptReady && (
-                        <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-neutral-100/80 p-6 text-center">
-                          <p className="text-sm text-neutral-500">Chargement du formulaire de paiement…</p>
+                          {(loadTimeout || profileIdLooksWrong) && (
+                            <p className="mt-3 text-xs text-neutral-500 max-w-[280px]">
+                              {profileIdLooksWrong
+                                ? "Utilisez l’ID de profil Mollie (commence par pfl_), pas la clé API (test_/live_). Dashboard Mollie → Développeurs → Clés API."
+                                : "Le formulaire met du temps à s’afficher. Vérifiez que NEXT_PUBLIC_MOLLIE_PROFILE_ID est bien l’ID de profil pfl_xxx dans le dashboard Mollie."}
+                            </p>
+                          )}
                         </div>
                       )}
                     </div>
