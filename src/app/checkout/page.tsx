@@ -36,6 +36,7 @@ const mollieLocaleMap: Record<string, string> = {
   fr: "fr_FR",
   en: "en_GB",
 }
+const mollieTestMode = process.env.NEXT_PUBLIC_MOLLIE_TESTMODE === "true"
 
 const mollieComponentStyles = {
   base: {
@@ -177,7 +178,7 @@ export default function CheckoutPage() {
           const container = cardRef.current
           if (!container) return
           try {
-            const mollie = M(profileId, { locale: mollieLocaleMap[locale] ?? "fr_FR" }) as {
+            const mollie = M(profileId, { locale: mollieLocaleMap[locale] ?? "fr_FR", testmode: mollieTestMode }) as {
               createComponent: (type: string, options?: { styles?: typeof mollieComponentStyles }) => { mount: (target: string | HTMLElement) => void }
               createToken: () => Promise<{ token?: string; error?: { message: string } }>
             }
@@ -207,7 +208,12 @@ export default function CheckoutPage() {
           } catch (err) {
             if (!cancelled) {
               const msg = err instanceof Error ? err.message : "Erreur Mollie"
-              setMollieError(msg)
+              const isProfileNotFound = /profile\s+.*\s+not\s+found/i.test(msg)
+              setMollieError(
+                isProfileNotFound
+                  ? `${msg} ${t("checkout.profileNotFoundHint") as string}`
+                  : msg
+              )
             }
           }
         })
@@ -358,7 +364,11 @@ export default function CheckoutPage() {
       setPayError(t("checkout.paymentFormUnavailable") as string)
       setPayLoading(false)
     } catch (err) {
-      setPayError(err instanceof Error ? err.message : (t("cart.checkoutError") as string))
+      const msg = err instanceof Error ? err.message : (t("cart.checkoutError") as string)
+      const isProfileNotFound = /profile\s+.*\s+not\s+found/i.test(msg)
+      setPayError(
+        isProfileNotFound ? `${msg} ${t("checkout.profileNotFoundHint") as string}` : msg
+      )
       setPayLoading(false)
     }
   }
