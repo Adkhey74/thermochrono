@@ -107,6 +107,11 @@ export const translations: Record<Locale, Record<string, unknown>> = {
       checkoutLoading: "Redirection vers le paiement…",
       checkoutError: "Impossible de créer la session de paiement.",
       payWithApplePay: "Payer avec Apple Pay",
+      crossSellTitle: "Vous aimerez peut-être aussi",
+      crossSellDescription: "Personnalisez votre gourde avec des stickers ou ajoutez une tasse pour le bureau.",
+      crossSellStickers: "Stickers gourde",
+      crossSellCup: "Tasse connectée 200 ml",
+      crossSellViewCart: "Voir mon panier",
     },
     contact: {
       title: "Contact",
@@ -419,6 +424,11 @@ export const translations: Record<Locale, Record<string, unknown>> = {
       checkoutLoading: "Redirecting to payment…",
       checkoutError: "Unable to create payment session.",
       payWithApplePay: "Pay with Apple Pay",
+      crossSellTitle: "You might also like",
+      crossSellDescription: "Personalize your bottle with stickers or add a cup for the office.",
+      crossSellStickers: "Bottle stickers",
+      crossSellCup: "Smart cup 200 ml",
+      crossSellViewCart: "View my cart",
     },
     contact: {
       title: "Contact",

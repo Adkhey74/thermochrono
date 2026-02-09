@@ -19,16 +19,23 @@ export default function Home() {
     <main>
       {/* Hero Section - mobile: image en hauteur naturelle, page scrollable ; desktop: header + hero = 1 page, image en pleine largeur */}
       <section className="relative w-full flex flex-col overflow-hidden sm:h-[calc(100dvh-var(--header-area-height,7.5rem))]">
-        <div className="relative w-full z-[var(--z-base)] block sm:flex sm:flex-1 sm:min-h-0 sm:items-center sm:justify-center">
-          <motion.img
-            src="/images/Acceuil.jpeg"
-            alt={t("common.heroImageAlt") as string}
-            className="w-full h-auto block sm:h-full sm:object-cover sm:object-center"
+        <div className="relative w-full min-h-[50vh] sm:min-h-0 z-[var(--z-base)] block sm:flex sm:flex-1 sm:items-center sm:justify-center">
+          <motion.div
+            className="absolute inset-0 w-full h-full"
             initial={{ opacity: 0.9, scale: 1.02 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.2, ease: "easeOut" }}
-            fetchPriority="high"
-          />
+          >
+            <video
+              src="/video/Accueil.mp4"
+              className="w-full h-full object-cover object-center"
+              autoPlay
+              loop
+              muted
+              playsInline
+              aria-label={t("common.heroImageAlt") as string}
+            />
+          </motion.div>
           <motion.div
             className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-primary/30 pointer-events-none"
             initial={{ opacity: 0 }}
