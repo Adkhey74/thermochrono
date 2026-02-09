@@ -45,8 +45,9 @@ export default function Home() {
         </div>
         <div className="absolute inset-0 bg-black/45 z-[var(--z-content)] sm:bg-black/50 pointer-events-none" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-transparent to-black/65 z-[var(--z-content)] sm:from-black/60 sm:to-black/70 pointer-events-none" />
-        <div className="absolute inset-0 container mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-20 lg:py-28 z-[var(--z-above-content)] flex items-center justify-center min-h-0 overflow-hidden">
-          <div className="max-w-3xl mx-auto text-center w-full flex flex-col items-center justify-center min-h-0 py-1">
+        <div className="absolute inset-0 container mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-20 lg:py-28 z-[var(--z-above-content)] flex flex-col min-h-0 overflow-hidden">
+          <div className="flex-1 flex flex-col items-center justify-center min-h-0 py-1">
+            <div className="max-w-3xl mx-auto text-center w-full flex flex-col items-center justify-center">
             <motion.span
               className="inline-flex items-center gap-1.5 rounded-full border border-white/40 bg-white/15 px-2.5 py-1 text-[10px] sm:text-sm font-semibold text-white backdrop-blur-md mb-1 sm:mb-8 shadow-lg shrink-0"
               initial={{ opacity: 0, y: 12 }}
@@ -111,30 +112,27 @@ export default function Home() {
                   </Link>
                 </Button>
               </div>
-              <Link
-                href="#featured"
-                className="sm:hidden flex flex-col items-center gap-0.5 mt-2 text-white/80 hover:text-white transition-colors min-h-[28px] justify-center"
-                aria-label={t("home.scrollDiscover") as string}
-              >
-                <span className="text-[10px] font-medium">{t("home.scrollDiscover") as string}</span>
-                <ChevronDown className="h-3.5 w-3.5" />
-              </Link>
             </motion.div>
+            </div>
+          </div>
+          <div className="shrink-0 flex flex-col items-center pt-4 sm:pt-6 pb-2 sm:pb-4">
             <motion.p
-              className="hidden sm:block mt-6"
+              className="sm:block flex flex-col items-center"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.6 }}
             >
               <Link
                 href="#featured"
-                className="text-sm font-medium text-white/80 hover:text-white underline-offset-4 hover:underline transition-colors"
+                className="text-[10px] sm:text-sm font-medium text-white/80 hover:text-white underline-offset-4 hover:underline transition-colors flex flex-col items-center gap-0.5"
+                aria-label={t("home.scrollDiscover") as string}
               >
-                {t("home.viewShop") as string}
+                <span className="font-medium">{t("home.scrollDiscover") as string}</span>
+                <ChevronDown className="h-3.5 w-3.5" />
               </Link>
             </motion.p>
             <motion.div
-              className="hidden sm:flex mt-10 flex-wrap items-center justify-center gap-6 rounded-2xl border border-white/20 bg-white/5 px-6 py-4 backdrop-blur-sm"
+              className="hidden sm:flex mt-4 flex-wrap items-center justify-center gap-6 rounded-2xl border border-white/20 bg-white/5 px-6 py-4 backdrop-blur-sm"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.7 }}
@@ -150,23 +148,21 @@ export default function Home() {
             </motion.div>
           </div>
         </div>
-        {/* Indicateur de scroll (desktop uniquement ; sur mobile il est sous les boutons) */}
-        <motion.a
-          href="#featured"
-          className="hidden sm:flex absolute bottom-6 left-1/2 -translate-x-1/2 z-[var(--z-above-content)] flex-col items-center gap-1 text-white/80 hover:text-white transition-colors min-h-[44px] justify-center pb-[env(safe-area-inset-bottom,0)]"
+        {/* Indicateur de scroll (animation) — le lien "Voir les gourdes" est dans le bloc en bas de section */}
+        <motion.span
+          className="hidden sm:flex absolute bottom-6 left-1/2 -translate-x-1/2 z-[var(--z-above-content)] flex-col items-center gap-1 text-white/60 pointer-events-none min-h-[44px] justify-center pb-[env(safe-area-inset-bottom,0)]"
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1 }}
-          aria-label={t("home.scrollDiscover") as string}
+          aria-hidden
         >
-          <span className="text-xs font-medium">{t("home.scrollDiscover") as string}</span>
           <motion.span
             animate={{ y: [0, 4, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           >
             <ChevronDown className="h-6 w-6" />
           </motion.span>
-        </motion.a>
+        </motion.span>
       </section>
 
       {/* Produit à la une */}
