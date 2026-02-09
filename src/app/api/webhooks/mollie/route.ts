@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import createMollieClient from "@mollie/api-client"
+import { getSupabaseAdmin } from "@/lib/supabase-server"
 
 /**
  * Webhook Mollie : Mollie envoie une requête POST (body application/x-www-form-urlencoded : id=tr_xxx)
@@ -31,9 +32,21 @@ export async function POST(request: Request) {
 
     const mollie = createMollieClient({ apiKey })
     const payment = await mollie.payments.get(paymentId)
-    // Ici vous pouvez mettre à jour votre commande selon payment.status (paid, failed, etc.)
+
     if (payment.status === "paid") {
-      // ex: marquer la commande comme payée en base
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim()
+      const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim()
+      if (supabaseUrl && supabaseServiceKey) {
+        try {
+          const supabase = getSupabaseAdmin()
+          await supabase
+            .from("orders")
+            .update({ status: "paid", updated_at: new Date().toISOString() })
+            .eq("payment_id", paymentId)
+        } catch (err) {
+          console.error("[webhook mollie] Supabase:", err)
+        }
+      }
     }
 
     return new NextResponse(null, { status: 200 })

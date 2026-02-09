@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import createMollieClient from "@mollie/api-client"
+import { getSupabaseAdmin } from "@/lib/supabase-server"
 
 /** Normalise le numéro au format E.164 attendu par Mollie (+countryCode + chiffres, max 15). Retourne null si invalide. */
 function normalizePhoneE164(phone: string, countryCode: string): string | null {
@@ -23,6 +24,7 @@ function normalizePhoneE164(phone: string, countryCode: string): string | null {
 
 export interface CheckoutItem {
   productId: string
+  variantId: string
   name: string
   price: number
   quantity: number
@@ -153,6 +155,75 @@ export async function POST(request: Request) {
         { error: "Mollie n'a pas renvoyé d'URL de paiement." },
         { status: 500 }
       )
+    }
+
+    // Enregistrer la commande en base (Supabase) pour suivi
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim()
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim()
+    if (supabaseUrl && supabaseServiceKey) {
+      try {
+        const supabase = getSupabaseAdmin()
+        const totalCents = Math.round(total * 100)
+        const orderPayload = {
+          payment_id: payment.id,
+          status: "pending",
+          email: shippingAddress && typeof shippingAddress === "object" ? shippingAddress.email ?? null : null,
+          shipping_address:
+            shippingAddress && typeof shippingAddress === "object"
+              ? {
+                  givenName: shippingAddress.givenName,
+                  familyName: shippingAddress.familyName,
+                  email: shippingAddress.email,
+                  phone: shippingAddress.phone,
+                  streetAndNumber: shippingAddress.streetAndNumber,
+                  streetAdditional: shippingAddress.streetAdditional,
+                  postalCode: shippingAddress.postalCode,
+                  city: shippingAddress.city,
+                  country: shippingAddress.country,
+                }
+              : null,
+          total_cents: totalCents,
+          currency: "EUR",
+          metadata: { itemCount: items.length, discount: discountAmount },
+        }
+        const { data: order, error: orderError } = await supabase
+          .from("orders")
+          .insert(orderPayload)
+          .select("id")
+          .single()
+
+        if (orderError || !order?.id) {
+          console.error("[checkout] Supabase order insert:", orderError)
+          return NextResponse.json(
+            { error: "Impossible d'enregistrer la commande." },
+            { status: 500 }
+          )
+        }
+
+        const orderItemsPayload = items.map((item) => ({
+          order_id: order.id,
+          product_id: item.productId,
+          variant_id: item.variantId,
+          name: item.name,
+          image_url: item.image || null,
+          unit_price: item.price,
+          quantity: item.quantity,
+        }))
+        const { error: itemsError } = await supabase.from("order_items").insert(orderItemsPayload)
+        if (itemsError) {
+          console.error("[checkout] Supabase order_items insert:", itemsError)
+          return NextResponse.json(
+            { error: "Impossible d'enregistrer le détail de la commande." },
+            { status: 500 }
+          )
+        }
+      } catch (supabaseErr) {
+        console.error("[checkout] Supabase:", supabaseErr)
+        return NextResponse.json(
+          { error: "Erreur lors de l'enregistrement de la commande." },
+          { status: 500 }
+        )
+      }
     }
 
     return NextResponse.json({ url: checkoutUrl })

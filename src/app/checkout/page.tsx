@@ -130,13 +130,14 @@ export default function CheckoutPage() {
       const display = getProductDisplay(p, t, v)
       return {
         productId: p.id,
+        variantId: item.variantId,
         name: display.color ? `${display.name} — ${display.color}` : display.name,
         price: v.price,
         quantity: item.quantity,
         image: v.images[0] ?? "",
       }
     })
-    .filter(Boolean) as { productId: string; name: string; price: number; quantity: number; image: string }[]
+    .filter(Boolean) as { productId: string; variantId: string; name: string; price: number; quantity: number; image: string }[]
 
   const subtotal = totalPrice()
   const total = Math.max(0.01, subtotal - discountAmount)
