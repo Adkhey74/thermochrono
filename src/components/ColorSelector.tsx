@@ -12,6 +12,9 @@ const colorToClass: Record<string, string> = {
   Black: "bg-gray-900",
   Blanc: "bg-white border-2 border-gray-300",
   White: "bg-white border-2 border-gray-300",
+  Rouge: "bg-rose-200",
+  Red: "bg-rose-200",
+  Violet: "bg-violet-200",
   Rose: "bg-pink-200",
 }
 

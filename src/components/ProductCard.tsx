@@ -24,9 +24,9 @@ export function ProductCard({ product, variant: variantProp, className }: Produc
   const href = product?.slug ? `/produit/${product.slug}` : "/boutique"
 
   return (
-    <Card className={cn("group overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm transition-all duration-300 ease-out hover:shadow-xl hover:border-primary/30 hover:-translate-y-1 pt-0", className)}>
-      <Link href={href} className="block">
-        <div className="relative aspect-[3/4] overflow-hidden rounded-t-2xl bg-card flex items-center justify-center">
+    <Card className={cn("group overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm transition-all duration-300 ease-out hover:shadow-xl hover:border-primary/30 hover:-translate-y-1 pt-0 flex flex-col h-full", className)}>
+      <Link href={href} className="flex flex-col flex-1 min-h-0">
+        <div className="relative aspect-[3/4] shrink-0 overflow-hidden rounded-t-2xl bg-card flex items-center justify-center">
           {imageSrc ? (
             <>
               <Image
@@ -54,15 +54,17 @@ export function ProductCard({ product, variant: variantProp, className }: Produc
             </div>
           )}
         </div>
-        <CardHeader className="pb-2 transition-colors duration-200 group-hover:text-foreground">
-          <h3 className="font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200">{display.name}</h3>
-          <p className="text-lg font-semibold text-primary">{variant.price.toFixed(2)} €</p>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <Button className="w-full min-h-[48px] touch-manipulation transition-all duration-200 hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98] shadow-sm group-hover:shadow-md">
-            {t("home.viewProduct") as string}
-          </Button>
-        </CardContent>
+        <div className="flex flex-col flex-1 min-h-0 px-6 pt-4 pb-3">
+          <CardHeader className="p-0 pb-2 transition-colors duration-200 group-hover:text-foreground">
+            <h3 className="font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200">{display.name}</h3>
+            <p className="text-lg font-semibold text-primary">{variant.price.toFixed(2)} €</p>
+          </CardHeader>
+          <CardContent className="p-0 pt-4 mt-auto">
+            <Button className="w-full min-h-[48px] touch-manipulation transition-all duration-200 hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98] shadow-sm group-hover:shadow-md">
+              {t("home.viewProduct") as string}
+            </Button>
+          </CardContent>
+        </div>
       </Link>
     </Card>
   )

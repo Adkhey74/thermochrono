@@ -5,6 +5,20 @@ import { ChevronDown, Palette, Euro, Package, RotateCcw } from "lucide-react"
 import { useI18n } from "@/lib/i18n/context"
 import { cn } from "@/lib/utils"
 
+/** Mapping libellé → classe Tailwind (pastille), aligné avec ColorSelector */
+const colorToClass: Record<string, string> = {
+  "Bleu pastel": "bg-sky-200",
+  "Pastel blue": "bg-sky-200",
+  Noir: "bg-gray-900",
+  Black: "bg-gray-900",
+  Blanc: "bg-white border-2 border-gray-300",
+  White: "bg-white border-2 border-gray-300",
+  Rouge: "bg-rose-200",
+  Red: "bg-rose-200",
+  Violet: "bg-violet-200",
+  Rose: "bg-pink-200",
+}
+
 export interface ShopFiltersState {
   colors: string[]
   priceMin: number | null
@@ -108,14 +122,9 @@ export function BoutiqueFilters({
   }
 
   const toggleColor = (id: string) => {
-    let next: string[]
-    if (filters.colors.length === 0) {
-      next = availableColors.map((c) => c.id).filter((x) => x !== id)
-    } else if (filters.colors.includes(id)) {
-      next = filters.colors.filter((c) => c !== id)
-    } else {
-      next = [...filters.colors, id]
-    }
+    const next = filters.colors.includes(id)
+      ? filters.colors.filter((c) => c !== id)
+      : [...filters.colors, id]
     onFiltersChange({ ...filters, colors: next })
   }
 
@@ -153,7 +162,8 @@ export function BoutiqueFilters({
         >
           <ul className="space-y-1" role="list">
             {availableColors.map(({ id, label }) => {
-              const checked = filters.colors.length === 0 || filters.colors.includes(id)
+              const checked = filters.colors.includes(id)
+              const colorClass = colorToClass[label] ?? "bg-gray-400"
               return (
                 <li key={id}>
                   <label
@@ -164,18 +174,12 @@ export function BoutiqueFilters({
                   >
                     <span
                       className={cn(
-                        "h-5 w-5 shrink-0 rounded border-2 flex items-center justify-center transition-colors",
-                        checked
-                          ? "bg-primary border-primary text-primary-foreground"
-                          : "border-border bg-card"
+                        "h-8 w-8 shrink-0 rounded-full transition-all flex items-center justify-center",
+                        colorClass,
+                        checked && "ring-2 ring-primary ring-offset-2 ring-offset-background"
                       )}
-                    >
-                      {checked && (
-                        <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                      )}
-                    </span>
+                      aria-hidden
+                    />
                     <input
                       type="checkbox"
                       checked={checked}

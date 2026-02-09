@@ -29,7 +29,7 @@ const gourde: Product = {
       id: "noir",
       color: "Noir",
       price: 19.99,
-      images: ["/images/gourde_noir.jpg", "/images/gourdeNoir.png", "/images/gourde_noir_woman.jpg"],
+      images: ["/images/gourde_noir.png", "/images/gourdeNoir.png", "/images/gourde_noir_woman.jpg"],
     },
     {
       id: "bleu",
@@ -41,7 +41,19 @@ const gourde: Product = {
       id: "blanc",
       color: "Blanc",
       price: 19.99,
-      images: ["/images/gourde bleu.png"],
+      images: ["/images/gourde_blanche.png"],
+    },
+    {
+      id: "rouge",
+      color: "Rouge",
+      price: 19.99,
+      images: ["/images/gourde_rouge.png"],
+    },
+    {
+      id: "violet",
+      color: "Violet",
+      price: 19.99,
+      images: ["/images/gourde_violet.png"],
     },
   ],
   features: features500ml,
@@ -89,7 +101,61 @@ const tasse200ml: Product = {
   videoUrl: undefined,
 }
 
-const products: Product[] = [gourde, tasse200ml]
+/** Stickers à coller sur la gourde — pack Wanted One Piece */
+const stickersWanted: Product = {
+  id: "stickers-gourde-wanted",
+  name: "Stickers gourde — Pack Wanted",
+  slug: "stickers-gourde-wanted",
+  description:
+    "Pack d'autocollants style « Wanted » à apposer sur votre gourde ou tasse Thermo Chrono. Designs inspirés des affiches de recherche, résistants et personnalisables. Plusieurs personnages au choix dans le pack.",
+  shortDescription:
+    "Autocollants décoratifs pour personnaliser votre gourde Thermo Chrono. Pack Wanted, plusieurs designs.",
+  variants: [
+    {
+      id: "pack-wanted",
+      color: "Pack Wanted",
+      price: 2.99,
+      images: ["/images/stickers_OP.png", "/images/stickerOP.png"],
+    },
+  ],
+  features: [
+    "Autocollants résistants à l'eau",
+    "Compatible gourde et tasse Thermo Chrono",
+    "Plusieurs designs dans le pack",
+    "Pose facile, repositionnables",
+  ],
+  inStock: true,
+  videoUrl: undefined,
+}
+
+/** Stickers à coller sur la gourde — pack chats / memes */
+const stickersChat: Product = {
+  id: "stickers-gourde-chat",
+  name: "Stickers gourde — Pack Chat",
+  slug: "stickers-gourde-chat",
+  description:
+    "Pack d'autocollants chats et memes à apposer sur votre gourde ou tasse Thermo Chrono. Designs humoristiques, résistants à l'eau. Plusieurs modèles dans le pack pour personnaliser votre gourde.",
+  shortDescription:
+    "Autocollants décoratifs chats et memes pour personnaliser votre gourde Thermo Chrono.",
+  variants: [
+    {
+      id: "pack-chat",
+      color: "",
+      price: 2.99,
+      images: ["/images/stickers_chat.png", "/images/stickersChat.png"],
+    },
+  ],
+  features: [
+    "Autocollants résistants à l'eau",
+    "Compatible gourde et tasse Thermo Chrono",
+    "Plusieurs designs chats et memes dans le pack",
+    "Pose facile, repositionnables",
+  ],
+  inStock: true,
+  videoUrl: undefined,
+}
+
+const products: Product[] = [gourde, tasse200ml, stickersWanted, stickersChat]
 
 /** Produit mis en avant sur la page d'accueil (gourde 500 ml) */
 export const product = gourde

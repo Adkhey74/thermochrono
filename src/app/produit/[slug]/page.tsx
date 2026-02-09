@@ -47,7 +47,7 @@ export default function ProductPage({ params }: PageProps) {
           <ChevronRight className="h-4 w-4 shrink-0 opacity-60" />
           <span className="text-foreground font-medium truncate max-w-[200px] sm:max-w-none">
             {display.name}
-            {display.color ? ` — ${display.color}` : ""}
+            {!product.slug.startsWith("stickers-") && display.color ? ` — ${display.color}` : ""}
           </span>
         </nav>
 
@@ -72,7 +72,7 @@ export default function ProductPage({ params }: PageProps) {
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-foreground leading-tight">
                   {display.name}
                 </h1>
-                {display.color && (
+                {!product.slug.startsWith("stickers-") && display.color && (
                   <p className="mt-2 text-muted-foreground font-medium">{display.color}</p>
                 )}
                 <p className="mt-4 text-2xl sm:text-3xl font-bold text-foreground">
@@ -80,13 +80,15 @@ export default function ProductPage({ params }: PageProps) {
                 </p>
               </section>
 
-              <section className="py-6 lg:py-8 border-y border-border/60">
-                <ColorSelector
-                  product={product}
-                  selectedVariant={selectedVariant}
-                  onSelectVariant={setSelectedVariant}
-                />
-              </section>
+              {product.variants.length > 1 && (
+                <section className="py-6 lg:py-8 border-y border-border/60">
+                  <ColorSelector
+                    product={product}
+                    selectedVariant={selectedVariant}
+                    onSelectVariant={setSelectedVariant}
+                  />
+                </section>
+              )}
 
               <section className="py-6 lg:py-8">
                 <ProductActions product={product} variant={selectedVariant} />

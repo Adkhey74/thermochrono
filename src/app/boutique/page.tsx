@@ -37,10 +37,11 @@ export default function BoutiquePage() {
 
   const catalogItems = useMemo(() => getCatalogItems(), [])
 
-  /** Couleurs disponibles : dédupliquées sur tout le catalogue (tous produits) */
+  /** Couleurs disponibles : dédupliquées sur tout le catalogue (hors produits stickers) */
   const availableColors = useMemo(() => {
     const byId = new Map<string, string>()
-    for (const { variant } of catalogItems) {
+    for (const { product, variant } of catalogItems) {
+      if (product.slug.startsWith("stickers-")) continue
       if (!byId.has(variant.id)) byId.set(variant.id, variant.color)
     }
     return Array.from(byId.entries(), ([id, label]) => ({ id, label }))
