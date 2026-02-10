@@ -125,7 +125,7 @@ export function buildOrderEmailCompany(order: OrderForEmail, items: OrderItemFor
       <p style="margin:0 0 4px;font-size:14px;"><strong>${escapeHtml(clientName)}</strong></p>
       <p style="margin:0 0 4px;font-size:14px;">Email : ${escapeHtml(clientEmail)}</p>
       <p style="margin:0 0 12px;font-size:14px;">Tél : ${escapeHtml(clientPhone)}</p>
-      <p style="margin:0 0 20px;font-size:14px;color:#374151;">Adresse livraison :<br/>${addressLines.map((l) => escapeHtml(l)).join("<br/>")}</p>
+      <p style="margin:0 0 20px;font-size:14px;color:#374151;">Adresse livraison :<br/>${addressLines.map((l) => escapeHtml(l ?? "")).join("<br/>")}</p>
       <h2 style="margin:0 0 12px;font-size:14px;color:#6b7280;text-transform:uppercase;">Détail commande</h2>
       <table style="width:100%;border-collapse:collapse;font-size:13px;">
         <thead>
