@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useCartStore } from "@/store/cart-store"
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ChevronRight } from "lucide-react"
 import { loadShipping, saveShipping, type StoredShipping } from "@/lib/checkout-shipping"
+import { useGooglePlacesScript, attachPlacesAutocomplete, parsePlaceAddress } from "@/lib/use-google-places"
 
 const CHECKOUT_DISCOUNT_KEY = "checkoutDiscount"
 const defaultShipping: StoredShipping = {
@@ -31,10 +32,36 @@ export default function LivraisonPage() {
   const [shippingError, setShippingError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [discount, setDiscount] = useState(0)
+  const addressInputRef = useRef<HTMLInputElement>(null)
+  const googlePlacesReady = useGooglePlacesScript()
 
   useEffect(() => {
     setShipping(loadShipping())
   }, [])
+
+  useEffect(() => {
+    if (!googlePlacesReady) return
+    let detach: (() => void) | null = null
+    const id = setTimeout(() => {
+      const input = addressInputRef.current
+      if (!input) return
+      detach = attachPlacesAutocomplete(input, (place) => {
+        const { streetAndNumber, postalCode, city, country } = parsePlaceAddress(place)
+        setShipping((s) => ({
+          ...s,
+          streetAndNumber,
+          postalCode,
+          city,
+          country,
+        }))
+      })
+    }, 100)
+    return () => {
+      clearTimeout(id)
+      detach?.()
+    }
+  }, [googlePlacesReady])
+
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem(CHECKOUT_DISCOUNT_KEY)
@@ -188,12 +215,14 @@ export default function LivraisonPage() {
                   {t("checkout.address") as string} <span className="text-red-500">*</span>
                 </label>
                 <Input
+                  ref={addressInputRef}
                   id="liv-streetAndNumber"
                   value={shipping.streetAndNumber}
                   onChange={(e) => setShipping((s) => ({ ...s, streetAndNumber: e.target.value }))}
                   placeholder="12 rue de la Paix"
                   className="h-11"
                   required
+                  autoComplete={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ? "off" : "street-address"}
                 />
               </div>
               <div className="space-y-2">
