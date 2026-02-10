@@ -1,6 +1,14 @@
 import { NextResponse } from "next/server"
 import createMollieClient from "@mollie/api-client"
 import { getSupabaseAdmin } from "@/lib/supabase-server"
+import { sendBrevoEmail } from "@/lib/brevo"
+import {
+  buildOrderEmailClient,
+  buildOrderEmailCompany,
+  ORDER_EMAIL,
+  type OrderForEmail,
+  type OrderItemForEmail,
+} from "@/lib/order-emails"
 
 /**
  * Webhook Mollie : Mollie envoie une requête POST (body application/x-www-form-urlencoded : id=tr_xxx)
@@ -43,6 +51,61 @@ export async function POST(request: Request) {
             .from("orders")
             .update({ status: "paid", updated_at: new Date().toISOString() })
             .eq("payment_id", paymentId)
+
+          // Récupérer la commande et les lignes pour les emails
+          const { data: order } = await supabase
+            .from("orders")
+            .select("id, email, shipping_address, total_cents, currency")
+            .eq("payment_id", paymentId)
+            .single()
+
+          if (order) {
+            const { data: orderItems } = await supabase
+              .from("order_items")
+              .select("name, unit_price, quantity")
+              .eq("order_id", order.id)
+
+            const items: OrderItemForEmail[] = (orderItems ?? []).map((row) => ({
+              name: row.name,
+              unit_price: Number(row.unit_price),
+              quantity: row.quantity,
+            }))
+            const orderForEmail: OrderForEmail = {
+              id: order.id,
+              email: order.email ?? null,
+              shipping_address: order.shipping_address as OrderForEmail["shipping_address"],
+              total_cents: order.total_cents ?? 0,
+              currency: order.currency ?? "EUR",
+            }
+
+            const brevoKey = process.env.BREVO_API_KEY?.trim()
+            if (brevoKey) {
+              const clientEmail = orderForEmail.email || (orderForEmail.shipping_address?.email as string) || null
+              if (clientEmail) {
+                try {
+                  await sendBrevoEmail({
+                    sender: ORDER_EMAIL.sender,
+                    to: [{ email: clientEmail }],
+                    subject: ORDER_EMAIL.clientSubject,
+                    htmlContent: buildOrderEmailClient(orderForEmail, items),
+                    replyTo: { email: ORDER_EMAIL.companyInbox, name: "Thermo Chrono" },
+                  })
+                } catch (err) {
+                  console.error("[webhook mollie] Brevo email client:", err)
+                }
+              }
+              try {
+                await sendBrevoEmail({
+                  sender: ORDER_EMAIL.sender,
+                  to: [{ email: ORDER_EMAIL.companyInbox, name: "Thermo Chrono" }],
+                  subject: ORDER_EMAIL.companySubject,
+                  htmlContent: buildOrderEmailCompany(orderForEmail, items),
+                })
+              } catch (err) {
+                console.error("[webhook mollie] Brevo email company:", err)
+              }
+            }
+          }
         } catch (err) {
           console.error("[webhook mollie] Supabase:", err)
         }

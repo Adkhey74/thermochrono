@@ -116,26 +116,11 @@ export default function Home() {
             </div>
           </div>
           <div className="shrink-0 flex flex-col items-center pt-4 sm:pt-6 pb-2 sm:pb-4">
-            <motion.p
-              className="sm:block flex flex-col items-center"
+            <motion.div
+              className="hidden sm:flex flex-wrap items-center justify-center gap-6 rounded-2xl border border-white/20 bg-white/5 px-6 py-4 backdrop-blur-sm"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.6 }}
-            >
-              <Link
-                href="#featured"
-                className="text-[10px] sm:text-sm font-medium text-white/80 hover:text-white underline-offset-4 hover:underline transition-colors flex flex-col items-center gap-0.5"
-                aria-label={t("home.scrollDiscover") as string}
-              >
-                <span className="font-medium">{t("home.scrollDiscover") as string}</span>
-                <ChevronDown className="h-3.5 w-3.5" />
-              </Link>
-            </motion.p>
-            <motion.div
-              className="hidden sm:flex mt-4 flex-wrap items-center justify-center gap-6 rounded-2xl border border-white/20 bg-white/5 px-6 py-4 backdrop-blur-sm"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.7 }}
             >
               <span className="flex items-center gap-2 text-white/90 font-medium">
                 <Truck className="h-5 w-5 text-white/90" />
@@ -148,21 +133,21 @@ export default function Home() {
             </motion.div>
           </div>
         </div>
-        {/* Indicateur de scroll (animation) — le lien "Voir les gourdes" est dans le bloc en bas de section */}
-        <motion.span
-          className="hidden sm:flex absolute bottom-6 left-1/2 -translate-x-1/2 z-[var(--z-above-content)] flex-col items-center gap-1 text-white/60 pointer-events-none min-h-[44px] justify-center pb-[env(safe-area-inset-bottom,0)]"
+        <motion.div
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[var(--z-above-content)] flex flex-col items-center gap-1 min-h-[44px] justify-center pb-[env(safe-area-inset-bottom,0)]"
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1 }}
-          aria-hidden
         >
-          <motion.span
-            animate={{ y: [0, 4, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          <Link
+            href="#featured"
+            className="text-xs sm:text-sm font-medium text-white/80 hover:text-white underline-offset-4 hover:underline transition-colors flex flex-col items-center gap-0.5"
+            aria-label={t("home.scrollDiscover") as string}
           >
-            <ChevronDown className="h-6 w-6" />
-          </motion.span>
-        </motion.span>
+            <span className="font-medium">{t("home.scrollDiscover") as string}</span>
+            <ChevronDown className="h-5 w-5" />
+          </Link>
+        </motion.div>
       </section>
 
       {/* Produit à la une */}
