@@ -36,14 +36,14 @@ export default function ContactPage() {
                 <div>
                   <p className="font-semibold text-foreground mb-1">{t("contact.email") as string}</p>
                   <a
-                    href="mailto:contact@boutique.fr"
+                    href="mailto:thermo.chronoo@gmail.com"
                     className="text-primary hover:underline font-medium"
                   >
-                    contact@boutique.fr
+                    thermo.chronoo@gmail.com
                   </a>
                   <div className="mt-5">
                     <Button asChild>
-                      <a href="mailto:contact@boutique.fr">
+                      <a href="mailto:thermo.chronoo@gmail.com">
                         {t("contact.sendEmail") as string}
                       </a>
                     </Button>

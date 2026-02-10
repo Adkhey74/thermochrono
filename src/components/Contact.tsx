@@ -127,7 +127,7 @@ export function Contact() {
                   </div>
                   <div>
                     <h3 className="font-bold text-foreground mb-1">{t("contact.emailTitle")}</h3>
-                    <p className="text-foreground font-medium">contact@hern-taxi.fr</p>
+                    <p className="text-foreground font-medium">thermo.chronoo@gmail.com</p>
                     <p className="text-sm text-muted-foreground mt-1">{t("contact.emailResponse")}</p>
                   </div>
                 </div>

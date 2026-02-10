@@ -196,8 +196,8 @@ export default function ConfidentialitePage() {
                       <Mail className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                       <div>
                         <p className="font-semibold">Email :</p>
-                        <a href="mailto:contact@boutique.fr" className="text-primary hover:underline">
-                          contact@boutique.fr
+                        <a href="mailto:thermo.chronoo@gmail.com" className="text-primary hover:underline">
+                          thermo.chronoo@gmail.com
                         </a>
                       </div>
                     </div>
