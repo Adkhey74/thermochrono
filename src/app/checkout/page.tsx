@@ -191,16 +191,26 @@ export default function CheckoutPage() {
             }
             mollieRef.current = mollie
             const opts = { styles: mollieComponentStyles }
+            const placeholders =
+              locale === "en"
+                ? { cardNumber: "1234 5678 9012 3456", expiry: "MM / YY", cvc: "123" }
+                : { cardNumber: "1234 5678 9012 3456", expiry: "MM / AA", cvc: "123" }
             const cardNumberEl = container.querySelector("[data-mollie=cardNumber]")
             const cardHolderEl = container.querySelector("[data-mollie=cardHolder]")
             const expiryEl = container.querySelector("[data-mollie=expiryDate]")
             const cvcEl = container.querySelector("[data-mollie=verificationCode]")
             if (cardNumberEl && cardHolderEl && expiryEl && cvcEl) {
               try {
-                mollie.createComponent("cardNumber", opts).mount(cardNumberEl as HTMLElement)
+                mollie
+                  .createComponent("cardNumber", { ...opts, placeholder: placeholders.cardNumber } as typeof opts & { placeholder?: string })
+                  .mount(cardNumberEl as HTMLElement)
                 mollie.createComponent("cardHolder", opts).mount(cardHolderEl as HTMLElement)
-                mollie.createComponent("expiryDate", opts).mount(expiryEl as HTMLElement)
-                mollie.createComponent("verificationCode", opts).mount(cvcEl as HTMLElement)
+                mollie
+                  .createComponent("expiryDate", { ...opts, placeholder: placeholders.expiry } as typeof opts & { placeholder?: string })
+                  .mount(expiryEl as HTMLElement)
+                mollie
+                  .createComponent("verificationCode", { ...opts, placeholder: placeholders.cvc } as typeof opts & { placeholder?: string })
+                  .mount(cvcEl as HTMLElement)
               } catch {
                 mollie.createComponent("cardNumber").mount(cardNumberEl as HTMLElement)
                 mollie.createComponent("cardHolder").mount(cardHolderEl as HTMLElement)
