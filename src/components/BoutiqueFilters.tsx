@@ -16,7 +16,7 @@ const colorToClass: Record<string, string> = {
   Rouge: "bg-rose-200",
   Red: "bg-rose-200",
   Violet: "bg-violet-200",
-  Rose: "bg-pink-100",
+  Rose: "bg-pink-200",
 }
 
 export interface ShopFiltersState {
