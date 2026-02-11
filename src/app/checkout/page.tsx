@@ -254,18 +254,32 @@ export default function CheckoutPage() {
     }
   }, [scriptReady, profileId, locale, containerReady])
 
-  // Masquer les placeholders visuels quand l'utilisateur focus le champ (iframe)
+  // Masquer les placeholders quand l'utilisateur focus ou tape dans le champ (iframe)
   useEffect(() => {
     if (!mollieMounted) return
     const wrapCard = cardNumberWrapRef.current
     const wrapCvc = cvcWrapRef.current
+    const hideIfFocused = () => {
+      const active = document.activeElement
+      if (active && wrapCard?.contains(active)) setShowCardNumberHint(false)
+      if (active && wrapCvc?.contains(active)) setShowCvcHint(false)
+    }
     const onFocusIn = (e: FocusEvent) => {
       const target = e.target as Node
       if (wrapCard?.contains(target)) setShowCardNumberHint(false)
       if (wrapCvc?.contains(target)) setShowCvcHint(false)
     }
+    const onMouseDown = () => {
+      hideIfFocused()
+    }
     document.addEventListener("focusin", onFocusIn)
-    return () => document.removeEventListener("focusin", onFocusIn)
+    document.addEventListener("mousedown", onMouseDown)
+    const interval = setInterval(hideIfFocused, 150)
+    return () => {
+      document.removeEventListener("focusin", onFocusIn)
+      document.removeEventListener("mousedown", onMouseDown)
+      clearInterval(interval)
+    }
   }, [mollieMounted])
 
   const handleApplePay = () => {
