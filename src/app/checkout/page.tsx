@@ -36,7 +36,10 @@ const mollieLocaleMap: Record<string, string> = {
   fr: "fr_FR",
   en: "en_GB",
 }
-const mollieTestMode = process.env.NEXT_PUBLIC_MOLLIE_TESTMODE === "true"
+// Mode test : uniquement si variable explicitement "true" ET pas en prod. Sur Vercel production on force toujours live.
+const isVercelProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === "production"
+const mollieTestMode =
+  !isVercelProduction && process.env.NEXT_PUBLIC_MOLLIE_TESTMODE === "true"
 
 const mollieComponentStyles = {
   base: {
