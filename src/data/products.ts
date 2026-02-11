@@ -114,7 +114,7 @@ const stickersWanted: Product = {
     {
       id: "pack-wanted",
       color: "Pack Wanted",
-      price: 1,
+      price: 0.1,
       images: ["/images/stickers_OP.png", "/images/stickerOP.png"],
     },
   ],
@@ -141,7 +141,7 @@ const stickersChat: Product = {
     {
       id: "pack-chat",
       color: "",
-      price: 1,
+      price: 0.1,
       images: ["/images/stickers_chat.png", "/images/stickersChat.png"],
     },
   ],

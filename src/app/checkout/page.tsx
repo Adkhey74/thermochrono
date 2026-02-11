@@ -345,7 +345,10 @@ export default function CheckoutPage() {
         }
         if (data.url) {
           session.completePayment(0)
-          window.location.href = data.url
+          // Redirection différée pour que le sheet Apple Pay se ferme avant le redirect
+          setTimeout(() => {
+            window.location.assign(data.url)
+          }, 100)
           return
         }
         session.completePayment(1)

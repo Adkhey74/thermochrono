@@ -150,12 +150,10 @@ export async function POST(request: Request) {
     )
 
     const checkoutUrl = payment.getCheckoutUrl()
-    if (!checkoutUrl) {
-      return NextResponse.json(
-        { error: "Mollie n'a pas renvoyé d'URL de paiement." },
-        { status: 500 }
-      )
-    }
+    const redirectUrl =
+      checkoutUrl && checkoutUrl.trim()
+        ? checkoutUrl
+        : `${baseUrl}/commande/success?id=${payment.id}`
 
     // Enregistrer la commande en base (Supabase) pour suivi
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim()
@@ -226,7 +224,7 @@ export async function POST(request: Request) {
       }
     }
 
-    return NextResponse.json({ url: checkoutUrl })
+    return NextResponse.json({ url: redirectUrl })
   } catch (err) {
     const message = err instanceof Error ? err.message : "Erreur Mollie"
     return NextResponse.json({ error: message }, { status: 500 })
