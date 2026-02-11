@@ -1,19 +1,21 @@
 "use client"
 
 import { useI18n } from "@/lib/i18n/context"
-import { getReviews } from "@/data/reviews"
+import { getReviewsForProduct } from "@/data/reviews"
 import { Star, Quote } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface ProductReviewsProps {
+  /** ID du produit pour afficher uniquement les avis correspondants */
+  productId: string
   /** Afficher seulement les N premiers avis (défaut: tous) */
   limit?: number
   className?: string
 }
 
-export function ProductReviews({ limit, className }: ProductReviewsProps) {
+export function ProductReviews({ productId, limit, className }: ProductReviewsProps) {
   const { t, locale } = useI18n()
-  const reviews = getReviews(locale)
+  const reviews = getReviewsForProduct(productId, locale)
   const displayReviews = limit ? reviews.slice(0, limit) : reviews
 
   if (displayReviews.length === 0) return null

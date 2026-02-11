@@ -93,7 +93,7 @@ export default function ProductPage({ params }: PageProps) {
               <section className="py-6 lg:py-8">
                 <ProductActions product={product} variant={selectedVariant} />
                 <div className="mt-6 pt-6 border-t border-border/60">
-                  <TrustBadges variant="row" />
+                  <TrustBadges variant="card" />
                 </div>
               </section>
             </div>
@@ -130,7 +130,7 @@ export default function ProductPage({ params }: PageProps) {
 
             {/* Colonne droite : avis clients */}
             <div className="p-4 sm:p-6 lg:p-8 border-t lg:border-t-0 lg:border-l border-border/60 min-w-0">
-              <ProductReviews limit={5} />
+              <ProductReviews productId={product.id} limit={5} />
             </div>
           </div>
 

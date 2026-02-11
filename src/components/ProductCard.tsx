@@ -33,7 +33,10 @@ export function ProductCard({ product, variant: variantProp, className }: Produc
                 src={imageSrc}
                 alt={display.name}
                 fill
-                className="object-contain object-center p-6 sm:p-8 transition-transform duration-500 ease-out group-hover:scale-110"
+                className={cn(
+                  "object-contain object-center p-6 sm:p-8 transition-all duration-300 ease-out",
+                  imageSrcHover && "group-hover:opacity-0 group-hover:scale-110"
+                )}
                 sizes="(max-width: 768px) 100vw, 320px"
               />
               {imageSrcHover && (
@@ -41,12 +44,11 @@ export function ProductCard({ product, variant: variantProp, className }: Produc
                   src={imageSrcHover}
                   alt=""
                   fill
-                  className="object-contain object-center p-6 sm:p-8 transition-all duration-500 ease-out opacity-0 group-hover:opacity-100 group-hover:scale-110 absolute inset-0"
+                  className="absolute inset-0 object-contain object-center p-6 sm:p-8 opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300 ease-out"
                   sizes="(max-width: 768px) 100vw, 320px"
                   aria-hidden
                 />
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/0 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </>
           ) : (
             <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm" aria-hidden>

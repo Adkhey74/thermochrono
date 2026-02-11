@@ -107,9 +107,9 @@ const stickersWanted: Product = {
   name: "Stickers gourde — Pack Wanted",
   slug: "stickers-gourde-wanted",
   description:
-    "Pack d'autocollants style « Wanted » à apposer sur votre gourde ou tasse Thermo Chrono. Designs inspirés des affiches de recherche, résistants et personnalisables. Plusieurs personnages au choix dans le pack.",
+    "Pack de 10 stickers aléatoires style « Wanted » à apposer sur votre gourde ou tasse Thermo Chrono. Designs inspirés des affiches de recherche, résistants et personnalisables. La composition du pack varie (10 stickers aléatoires).",
   shortDescription:
-    "Autocollants décoratifs pour personnaliser votre gourde Thermo Chrono. Pack Wanted, plusieurs designs.",
+    "10 stickers aléatoires pour personnaliser votre gourde Thermo Chrono. Pack Wanted, plusieurs designs.",
   variants: [
     {
       id: "pack-wanted",
@@ -119,9 +119,9 @@ const stickersWanted: Product = {
     },
   ],
   features: [
+    "10 stickers aléatoires dans le pack",
     "Autocollants résistants à l'eau",
     "Compatible gourde et tasse Thermo Chrono",
-    "Plusieurs designs dans le pack",
     "Pose facile, repositionnables",
   ],
   inStock: true,
@@ -134,9 +134,9 @@ const stickersChat: Product = {
   name: "Stickers gourde — Pack Chat",
   slug: "stickers-gourde-chat",
   description:
-    "Pack d'autocollants chats et memes à apposer sur votre gourde ou tasse Thermo Chrono. Designs humoristiques, résistants à l'eau. Plusieurs modèles dans le pack pour personnaliser votre gourde.",
+    "Pack de 10 stickers aléatoires chats et memes à apposer sur votre gourde ou tasse Thermo Chrono. Designs humoristiques, résistants à l'eau. La composition du pack varie (10 stickers aléatoires).",
   shortDescription:
-    "Autocollants décoratifs chats et memes pour personnaliser votre gourde Thermo Chrono.",
+    "10 stickers aléatoires chats et memes pour personnaliser votre gourde Thermo Chrono.",
   variants: [
     {
       id: "pack-chat",
@@ -146,9 +146,9 @@ const stickersChat: Product = {
     },
   ],
   features: [
+    "10 stickers aléatoires dans le pack",
     "Autocollants résistants à l'eau",
     "Compatible gourde et tasse Thermo Chrono",
-    "Plusieurs designs chats et memes dans le pack",
     "Pose facile, repositionnables",
   ],
   inStock: true,

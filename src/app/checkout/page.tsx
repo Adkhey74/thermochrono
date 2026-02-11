@@ -10,7 +10,8 @@ import { useI18n } from "@/lib/i18n/context"
 import { getProductById, getVariant } from "@/data/products"
 import { getProductDisplay } from "@/lib/i18n/product-display"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, Loader2, Lock, Check, Package, Shield, CreditCard } from "lucide-react"
+import { PAYMENT_LOGOS } from "@/components/PaymentMethods"
+import { ChevronLeft, Loader2, Lock, Check, Package, Shield } from "lucide-react"
 import { loadShipping, hasValidShipping } from "@/lib/checkout-shipping"
 
 const CHECKOUT_DISCOUNT_KEY = "checkoutDiscount"
@@ -656,7 +657,7 @@ export default function CheckoutPage() {
                       <Button
                         type="submit"
                         size="lg"
-                        className="mt-6 w-full min-h-[52px] bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-semibold rounded-lg text-[15px] touch-manipulation"
+                        className="mt-6 w-full min-h-[52px] bg-black hover:bg-neutral-800 active:bg-neutral-900 text-white font-semibold rounded-lg text-[15px] touch-manipulation"
                         disabled={payLoading || !profileId || !scriptReady}
                       >
                         {payLoading ? (t("checkout.paying") as string) : (t("checkout.payButton") as string)}
@@ -677,8 +678,19 @@ export default function CheckoutPage() {
                           <span>{t("checkout.reassuranceDelivery") as string}</span>
                         </div>
                         <div className="flex items-center gap-2 text-sm text-neutral-600">
-                          <CreditCard className="h-4 w-4 shrink-0 text-neutral-500" aria-hidden />
-                          <span>{t("checkout.reassuranceCards") as string}</span>
+                          <div className="flex items-center gap-2 shrink-0">
+                            {PAYMENT_LOGOS.map(({ src, alt }) => (
+                              <Image
+                                key={alt}
+                                src={src}
+                                alt={alt}
+                                width={24}
+                                height={16}
+                                className="object-contain"
+                                title={alt}
+                              />
+                            ))}
+                          </div>
                         </div>
                         <div className="flex items-center gap-2 text-sm text-neutral-600">
                           <Shield className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden />

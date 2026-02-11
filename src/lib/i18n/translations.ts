@@ -190,7 +190,7 @@ export const translations: Record<Locale, Record<string, unknown>> = {
     },
     payment: {
       title: "Moyens de paiement acceptés",
-      methods: "Visa, Mastercard, PayPal, Carte Bleue",
+      methods: "Visa, Mastercard, Carte Bleue",
     },
     trust: {
       fastDelivery: "Livraison sous 7 à 10 jours",
@@ -289,31 +289,31 @@ export const translations: Record<Locale, Record<string, unknown>> = {
       },
       "stickers-gourde-wanted": {
         name: "Stickers gourde — Pack Wanted",
-        shortDescription: "Autocollants décoratifs pour personnaliser votre gourde Thermo Chrono. Pack Wanted, plusieurs designs.",
-        description: "Pack d'autocollants style « Wanted » à apposer sur votre gourde ou tasse Thermo Chrono. Designs inspirés des affiches de recherche, résistants et personnalisables. Plusieurs personnages au choix dans le pack.",
+        shortDescription: "10 stickers aléatoires pour personnaliser votre gourde Thermo Chrono. Pack Wanted, plusieurs designs.",
+        description: "Pack de 10 stickers aléatoires style « Wanted » à apposer sur votre gourde ou tasse Thermo Chrono. Designs inspirés des affiches de recherche, résistants et personnalisables. La composition du pack varie (10 stickers aléatoires).",
         color: "Pack Wanted",
         variants: {
           "pack-wanted": { color: "Pack Wanted" },
         },
         features: [
+          "10 stickers aléatoires dans le pack",
           "Autocollants résistants à l'eau",
           "Compatible gourde et tasse Thermo Chrono",
-          "Plusieurs designs dans le pack",
           "Pose facile, repositionnables",
         ],
       },
       "stickers-gourde-chat": {
         name: "Stickers gourde — Pack Chat",
-        shortDescription: "Autocollants décoratifs chats et memes pour personnaliser votre gourde Thermo Chrono.",
-        description: "Pack d'autocollants chats et memes à apposer sur votre gourde ou tasse Thermo Chrono. Designs humoristiques, résistants à l'eau. Plusieurs modèles dans le pack pour personnaliser votre gourde.",
+        shortDescription: "10 stickers aléatoires chats et memes pour personnaliser votre gourde Thermo Chrono.",
+        description: "Pack de 10 stickers aléatoires chats et memes à apposer sur votre gourde ou tasse Thermo Chrono. Designs humoristiques, résistants à l'eau. La composition du pack varie (10 stickers aléatoires).",
         color: "",
         variants: {
           "pack-chat": { color: "" },
         },
         features: [
+          "10 stickers aléatoires dans le pack",
           "Autocollants résistants à l'eau",
           "Compatible gourde et tasse Thermo Chrono",
-          "Plusieurs designs chats et memes dans le pack",
           "Pose facile, repositionnables",
         ],
       },
@@ -508,7 +508,7 @@ export const translations: Record<Locale, Record<string, unknown>> = {
     },
     payment: {
       title: "Accepted payment methods",
-      methods: "Visa, Mastercard, PayPal, Carte Bleue",
+      methods: "Visa, Mastercard, Carte Bleue",
     },
     trust: {
       fastDelivery: "Delivery in 7 to 10 days",
@@ -607,31 +607,31 @@ export const translations: Record<Locale, Record<string, unknown>> = {
       },
       "stickers-gourde-wanted": {
         name: "Bottle stickers — Wanted pack",
-        shortDescription: "Decorative stickers to personalize your Thermo Chrono bottle. Wanted pack, multiple designs.",
-        description: "Pack of « Wanted » style stickers to apply on your Thermo Chrono bottle or cup. Search poster inspired designs, durable and customizable. Multiple characters to choose from in the pack.",
+        shortDescription: "10 random stickers to personalize your Thermo Chrono bottle. Wanted pack, multiple designs.",
+        description: "Pack of 10 random « Wanted » style stickers to apply on your Thermo Chrono bottle or cup. Search poster inspired designs, durable and customizable. Pack composition varies (10 random stickers).",
         color: "Wanted pack",
         variants: {
           "pack-wanted": { color: "Wanted pack" },
         },
         features: [
+          "10 random stickers in the pack",
           "Water-resistant stickers",
           "Compatible with Thermo Chrono bottle and cup",
-          "Multiple designs in the pack",
           "Easy to apply, repositionable",
         ],
       },
       "stickers-gourde-chat": {
         name: "Bottle stickers — Cat pack",
-        shortDescription: "Decorative cat and meme stickers to personalize your Thermo Chrono bottle.",
-        description: "Pack of cat and meme stickers to apply on your Thermo Chrono bottle or cup. Humorous designs, water-resistant. Multiple designs in the pack to personalize your bottle.",
+        shortDescription: "10 random cat and meme stickers to personalize your Thermo Chrono bottle.",
+        description: "Pack of 10 random cat and meme stickers to apply on your Thermo Chrono bottle or cup. Humorous designs, water-resistant. Pack composition varies (10 random stickers).",
         color: "",
         variants: {
           "pack-chat": { color: "" },
         },
         features: [
+          "10 random stickers in the pack",
           "Water-resistant stickers",
           "Compatible with Thermo Chrono bottle and cup",
-          "Multiple cat and meme designs in the pack",
           "Easy to apply, repositionable",
         ],
       },
