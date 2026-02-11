@@ -74,6 +74,10 @@ export default function CheckoutPage() {
   const [applePayLoading, setApplePayLoading] = useState(false)
   const [discountAmount, setDiscountAmount] = useState(0)
   const [shippingAddress, setShippingAddress] = useState<ReturnType<typeof loadShipping> | null>(null)
+  const [showCardNumberHint, setShowCardNumberHint] = useState(true)
+  const [showCvcHint, setShowCvcHint] = useState(true)
+  const cardNumberWrapRef = useRef<HTMLDivElement>(null)
+  const cvcWrapRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     try {
@@ -249,6 +253,20 @@ export default function CheckoutPage() {
       setMollieMounted(false)
     }
   }, [scriptReady, profileId, locale, containerReady])
+
+  // Masquer les placeholders visuels quand l'utilisateur focus le champ (iframe)
+  useEffect(() => {
+    if (!mollieMounted) return
+    const wrapCard = cardNumberWrapRef.current
+    const wrapCvc = cvcWrapRef.current
+    const onFocusIn = (e: FocusEvent) => {
+      const target = e.target as Node
+      if (wrapCard?.contains(target)) setShowCardNumberHint(false)
+      if (wrapCvc?.contains(target)) setShowCvcHint(false)
+    }
+    document.addEventListener("focusin", onFocusIn)
+    return () => document.removeEventListener("focusin", onFocusIn)
+  }, [mollieMounted])
 
   const handleApplePay = () => {
     if (!shippingAddress || applePayLoading || payLoading) return
@@ -559,11 +577,21 @@ export default function CheckoutPage() {
                               <p className="text-sm text-red-600">{mollieError}</p>
                             </div>
                           )}
-                          <div className="space-y-1.5">
+                          <div className="space-y-1.5" ref={cardNumberWrapRef}>
                             <label className="text-xs font-medium text-neutral-500 block" htmlFor="mollie-card-number">
                               {t("checkout.placeholderCardNumber") as string}
                             </label>
-                            <div data-mollie="cardNumber" id="mollie-card-number" className="min-h-[44px] rounded-lg border border-neutral-200 bg-white" />
+                            <div className="relative min-h-[44px]">
+                              {showCardNumberHint && (
+                                <span
+                                  className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-[15px] text-neutral-400"
+                                  aria-hidden
+                                >
+                                  1234 5678 9012 3456
+                                </span>
+                              )}
+                              <div data-mollie="cardNumber" id="mollie-card-number" className="min-h-[44px] rounded-lg border border-neutral-200 bg-white" />
+                            </div>
                           </div>
                           <div className="space-y-1.5">
                             <label className="text-xs font-medium text-neutral-500 block" htmlFor="mollie-card-holder">
@@ -578,11 +606,21 @@ export default function CheckoutPage() {
                               </label>
                               <div data-mollie="expiryDate" id="mollie-expiry" className="min-h-[44px] rounded-lg border border-neutral-200 bg-white" />
                             </div>
-                            <div className="space-y-1.5">
+                            <div className="space-y-1.5" ref={cvcWrapRef}>
                               <label className="text-xs font-medium text-neutral-500 block" htmlFor="mollie-cvc">
                                 {t("checkout.placeholderCvc") as string}
                               </label>
-                              <div data-mollie="verificationCode" id="mollie-cvc" className="min-h-[44px] rounded-lg border border-neutral-200 bg-white" />
+                              <div className="relative min-h-[44px]">
+                                {showCvcHint && (
+                                  <span
+                                    className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-[15px] text-neutral-400"
+                                    aria-hidden
+                                  >
+                                    123
+                                  </span>
+                                )}
+                                <div data-mollie="verificationCode" id="mollie-cvc" className="min-h-[44px] rounded-lg border border-neutral-200 bg-white" />
+                              </div>
                             </div>
                           </div>
                         </div>
