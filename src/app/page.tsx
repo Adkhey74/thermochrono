@@ -2,7 +2,7 @@
 
 import { useI18n } from "@/lib/i18n/context"
 import { Button } from "@/components/ui/button"
-import { Package, Truck, Shield, ArrowRight, Sparkles, ChevronDown, ShoppingCart, Gift, Thermometer, Droplets, ShieldCheck } from "lucide-react"
+import { Package, Truck, Shield, ArrowRight, ChevronDown, ShoppingCart, Gift, Thermometer, Droplets, ShieldCheck } from "lucide-react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { ProductCard } from "@/components/ProductCard"
@@ -54,7 +54,7 @@ export default function Home() {
               transition={{ duration: 0.6 }}
               whileHover={{ scale: 1.03 }}
             >
-              <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 text-amber-200" />
+              <Truck className="h-3 w-3 sm:h-4 sm:w-4 text-sky-300" />
               {t("home.badgeBrand") as string}
             </motion.span>
             <motion.h1
