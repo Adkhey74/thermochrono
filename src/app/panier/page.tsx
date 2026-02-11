@@ -15,6 +15,7 @@ import { product, getProductById, getVariant } from "@/data/products"
 import { ChevronRight } from "lucide-react"
 import { getPromoByCode, applyPromo, type PromoCode } from "@/lib/promo-codes"
 import { getProductDisplay } from "@/lib/i18n/product-display"
+import { getShippingFee } from "@/lib/shipping"
 
 const CHECKOUT_DISCOUNT_KEY = "checkoutDiscount"
 
@@ -30,7 +31,9 @@ export default function CartPage() {
 
   const subtotal = totalPrice()
   const discount = appliedPromo ? applyPromo(subtotal, appliedPromo) : 0
-  const finalTotal = Math.max(0, subtotal - discount)
+  const orderAmount = Math.max(0, subtotal - discount)
+  const shippingFee = getShippingFee(orderAmount)
+  const finalTotal = orderAmount + shippingFee
 
   const handleApplyPromo = () => {
     setPromoError(null)
@@ -208,6 +211,17 @@ export default function CartPage() {
                   <p className="flex justify-between text-green-600 text-sm">
                     <span>{t("cart.discount") as string} ({appliedPromo.code})</span>
                     <span>−{discount.toFixed(2)} €</span>
+                  </p>
+                )}
+                {shippingFee > 0 ? (
+                  <p className="flex justify-between text-muted-foreground text-sm">
+                    <span>{t("cart.shippingFee") as string}</span>
+                    <span>{shippingFee.toFixed(2)} €</span>
+                  </p>
+                ) : (
+                  <p className="flex justify-between text-green-600 text-sm">
+                    <span>{t("cart.freeShippingFrom") as string}</span>
+                    <span>0,00 €</span>
                   </p>
                 )}
                 <p className="flex justify-between pt-2 border-t border-border font-semibold text-base">

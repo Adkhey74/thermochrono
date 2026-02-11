@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import createMollieClient from "@mollie/api-client"
 import { getSupabaseAdmin } from "@/lib/supabase-server"
+import { getShippingFee } from "@/lib/shipping"
 
 /** Normalise le numéro au format E.164 attendu par Mollie (+countryCode + chiffres, max 15). Retourne null si invalide. */
 function normalizePhoneE164(phone: string, countryCode: string): string | null {
@@ -94,7 +95,9 @@ export async function POST(request: Request) {
   }
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const total = Math.max(0.01, subtotal - discountAmount)
+  const orderAmount = subtotal - discountAmount
+  const shippingFee = getShippingFee(orderAmount)
+  const total = Math.max(0.01, orderAmount + shippingFee)
   const amountStr = total.toFixed(2)
 
   const mollieClient = createMollieClient({ apiKey })
@@ -115,6 +118,7 @@ export async function POST(request: Request) {
     metadata: {
       itemCount: String(items.length),
       discount: String(discountAmount),
+      shippingFee: String(shippingFee),
     },
   }
 
@@ -182,7 +186,7 @@ export async function POST(request: Request) {
               : null,
           total_cents: totalCents,
           currency: "EUR",
-          metadata: { itemCount: items.length, discount: discountAmount },
+          metadata: { itemCount: items.length, discount: discountAmount, shippingFee },
         }
         const { data: order, error: orderError } = await supabase
           .from("orders")

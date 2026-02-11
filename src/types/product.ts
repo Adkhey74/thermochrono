@@ -3,6 +3,8 @@ export interface ProductVariant {
   color: string
   images: string[]
   price: number
+  /** Prix avant réduction (affiché barré si défini) */
+  compareAtPrice?: number
 }
 
 export interface Product {

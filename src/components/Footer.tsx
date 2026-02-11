@@ -49,6 +49,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/cgv" className="text-primary-foreground/80 hover:text-primary-foreground transition-all duration-200 ease-out inline-flex items-center min-h-[44px] py-2 hover:translate-x-0.5 touch-manipulation">
+                  {t("footer.cgv") as string}
+                </Link>
+              </li>
+              <li>
                 <Link href="/confidentialite" className="text-primary-foreground/80 hover:text-primary-foreground transition-all duration-200 ease-out inline-flex items-center min-h-[44px] py-2 hover:translate-x-0.5 touch-manipulation">
                   {t("footer.privacy") as string}
                 </Link>
@@ -58,7 +63,13 @@ export function Footer() {
         </div>
 
         <div className="border-t border-primary-foreground/10 mt-12 pt-8 space-y-6">
-          <PaymentMethods light className="[&_p]:text-primary-foreground/70 [&_.flex]:border-primary-foreground/20 [&_.flex]:bg-primary-foreground/5" />
+          <div className="inline-flex flex-col w-fit">
+            <PaymentMethods
+              height={20}
+              cardStyle
+              className="flex flex-col items-center [&>p]:hidden [&>div]:gap-2 [&>div]:items-center [&>div]:justify-center"
+            />
+          </div>
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-primary-foreground/70 text-sm text-center md:text-left">
               {t("footer.copyright") as string}
@@ -66,6 +77,9 @@ export function Footer() {
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-sm">
               <Link href="/mentions-legales" className="text-primary-foreground/70 hover:text-primary-foreground transition-colors duration-200 min-h-[44px] inline-flex items-center py-2 touch-manipulation">
                 {t("footer.legal") as string}
+              </Link>
+              <Link href="/cgv" className="text-primary-foreground/70 hover:text-primary-foreground transition-colors duration-200 min-h-[44px] inline-flex items-center py-2 touch-manipulation">
+                {t("footer.cgv") as string}
               </Link>
               <Link href="/confidentialite" className="text-primary-foreground/70 hover:text-primary-foreground transition-colors duration-200 min-h-[44px] inline-flex items-center py-2 touch-manipulation">
                 {t("footer.privacy") as string}

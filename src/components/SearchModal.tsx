@@ -147,9 +147,16 @@ export function SearchModal({ open, onOpenChange }: SearchModalProps) {
                             <p className="font-semibold text-base group-hover:text-primary transition-colors">
                               {display.name}
                             </p>
-                            <p className="text-lg font-bold text-primary mt-1">
-                              {item.variant.price.toFixed(2)} €
-                            </p>
+                            <div className="flex flex-col gap-0.5 mt-1">
+                              {item.variant.compareAtPrice != null && item.variant.compareAtPrice > item.variant.price ? (
+                                <>
+                                  <span className="text-sm text-muted-foreground line-through">{item.variant.compareAtPrice.toFixed(2)} €</span>
+                                  <p className="text-lg font-bold text-red-600">{item.variant.price.toFixed(2)} €</p>
+                                </>
+                              ) : (
+                                <p className="text-lg font-bold text-foreground">{item.variant.price.toFixed(2)} €</p>
+                              )}
+                            </div>
                           </div>
                         </Link>
                       )

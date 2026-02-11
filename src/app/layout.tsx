@@ -9,10 +9,11 @@ import { PageTransition } from "@/components/PageTransition";
 import { Toaster } from "sonner";
 import { StructuredData } from "@/components/StructuredData";
 
-const plusJakarta = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-sans-app",
   subsets: ["latin"],
   display: "swap",
+  weight: ["400", "500", "600", "700"],
 });
 
 export const viewport = {
@@ -72,7 +73,7 @@ export default function RootLayout({
         <StructuredData />
       </head>
       <body
-        className={`${plusJakarta.variable} font-sans antialiased`}
+        className={`${plusJakartaSans.variable} font-sans antialiased`}
       >
         <I18nProvider>
           <PromoBar />

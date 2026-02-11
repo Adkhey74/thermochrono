@@ -2,13 +2,12 @@
 
 import { useI18n } from "@/lib/i18n/context"
 import { Button } from "@/components/ui/button"
-import { Package, Truck, Shield, ArrowRight, Sparkles, ChevronDown, ShoppingCart } from "lucide-react"
+import { Package, Truck, Shield, ArrowRight, Sparkles, ChevronDown, ShoppingCart, Gift, Thermometer, Droplets, ShieldCheck } from "lucide-react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { ProductCard } from "@/components/ProductCard"
 import { ReviewsCarousel } from "@/components/ReviewsCarousel"
 import { FaqSection } from "@/components/FaqSection"
-import { TrustBadges } from "@/components/TrustBadges"
 import { ScrollReveal } from "@/components/ScrollReveal"
 import { product } from "@/data/products"
 
@@ -127,6 +126,10 @@ export default function Home() {
                 {t("home.fastDelivery") as string}
               </span>
               <span className="flex items-center gap-2 text-white/90 font-medium">
+                <Gift className="h-5 w-5 text-white/90" />
+                {t("home.badgeFreeDelivery") as string}
+              </span>
+              <span className="flex items-center gap-2 text-white/90 font-medium">
                 <Shield className="h-5 w-5 text-white/90" />
                 {t("home.securePayment") as string}
               </span>
@@ -141,11 +144,11 @@ export default function Home() {
         >
           <Link
             href="#featured"
-            className="text-xs sm:text-sm font-medium text-white/80 hover:text-white underline-offset-4 hover:underline transition-colors flex flex-col items-center gap-0.5"
+            className="text-xs sm:text-sm font-semibold text-white/95 hover:text-white underline-offset-4 hover:underline transition-colors flex flex-col items-center gap-1 animate-pulse hover:animate-none min-h-[44px] justify-center touch-manipulation"
             aria-label={t("home.scrollDiscover") as string}
           >
-            <span className="font-medium">{t("home.scrollDiscover") as string}</span>
-            <ChevronDown className="h-5 w-5" />
+            <span>{t("home.scrollDiscover") as string}</span>
+            <ChevronDown className="h-6 w-6 sm:h-5 sm:w-5" />
           </Link>
         </motion.div>
       </section>
@@ -154,10 +157,11 @@ export default function Home() {
       <section id="featured" className="py-14 sm:py-20 lg:py-24 bg-background scroll-mt-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal direction="up" delay={0.1}>
-            <div className="text-center mb-14">
+            <div className="text-center mb-16">
               <h2 className="text-3xl font-bold tracking-tight mb-2">{t("home.featured") as string}</h2>
               <div className="w-14 h-1 bg-primary rounded-full mx-auto mb-4" />
-              <p className="text-muted-foreground max-w-xl mx-auto">{t("home.featuredIntro") as string}</p>
+              <p className="text-muted-foreground max-w-xl mx-auto mb-2">{t("home.featuredIntro") as string}</p>
+              <p className="text-sm text-primary font-medium">{t("home.featuredSubtitle") as string}</p>
             </div>
           </ScrollReveal>
           <ScrollReveal direction="up" delay={0.2}>
@@ -166,17 +170,33 @@ export default function Home() {
                 <ProductCard product={product} variant={product.variants[0]} />
               </div>
             </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-8 max-w-2xl mx-auto">
+              {[
+                { Icon: Thermometer, label: t("home.featuredPoint1") as string, color: "bg-amber-100 text-amber-800 [&_svg]:text-amber-600" },
+                { Icon: Droplets, label: t("home.featuredPoint2") as string, color: "bg-sky-100 text-sky-800 [&_svg]:text-sky-600" },
+                { Icon: ShieldCheck, label: t("home.featuredPoint3") as string, color: "bg-emerald-100 text-emerald-800 [&_svg]:text-emerald-600" },
+                { Icon: Truck, label: t("home.featuredPoint4") as string, color: "bg-violet-100 text-violet-800 [&_svg]:text-violet-600" },
+              ].map(({ Icon, label, color }, i) => (
+                <span
+                  key={i}
+                  className={`inline-flex items-center justify-center gap-2 rounded-full px-3 py-2.5 sm:px-4 text-sm font-medium text-center ${color}`}
+                >
+                  <Icon className="h-4 w-4 shrink-0" aria-hidden />
+                  {label}
+                </span>
+              ))}
+            </div>
           </ScrollReveal>
           <ScrollReveal direction="fade" delay={0.3}>
-            <p className="text-center mt-12">
+            <div className="mt-10 pt-8 border-t border-border text-center">
               <Link
                 href="/boutique"
-                className="inline-flex items-center gap-2 text-primary font-semibold hover:underline underline-offset-4 transition-colors duration-200"
+                className="inline-flex items-center gap-2 text-primary font-semibold hover:underline underline-offset-4 transition-colors duration-200 text-sm"
               >
                 {t("home.viewShop") as string}
                 <ArrowRight className="h-4 w-4" />
               </Link>
-            </p>
+            </div>
           </ScrollReveal>
         </div>
       </section>
@@ -187,11 +207,12 @@ export default function Home() {
           <ScrollReveal direction="up" delay={0.1}>
             <div className="max-w-3xl mx-auto text-center mb-12">
               <h2 className="text-3xl font-bold tracking-tight mb-2">{t("home.aboutTitle") as string}</h2>
-              <div className="w-14 h-1 bg-primary rounded-full mx-auto" />
+              <div className="w-14 h-1 bg-primary rounded-full mx-auto mb-4" />
+              <p className="text-muted-foreground text-lg max-w-xl mx-auto">{t("home.aboutLead") as string}</p>
             </div>
           </ScrollReveal>
           <ScrollReveal direction="up" delay={0.2}>
-            <div className="max-w-4xl mx-auto rounded-2xl border border-border bg-card p-8 lg:p-12 shadow-sm">
+            <div className="max-w-2xl mx-auto rounded-2xl border border-border bg-card p-8 lg:p-12 shadow-md">
               <div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
                 <p>{t("home.description1") as string}</p>
                 <p>{t("home.description2") as string}</p>
@@ -207,14 +228,15 @@ export default function Home() {
           <ScrollReveal direction="up" delay={0.1}>
             <div className="text-center mb-14">
               <h2 className="text-3xl font-bold tracking-tight mb-2">{t("home.whyUs") as string}</h2>
-              <div className="w-14 h-1 bg-primary rounded-full mx-auto" />
+              <div className="w-14 h-1 bg-primary rounded-full mx-auto mb-4" />
+              <p className="text-muted-foreground max-w-xl mx-auto">{t("home.whyUsLead") as string}</p>
             </div>
           </ScrollReveal>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10 max-w-5xl mx-auto">
             {[
-              { icon: Package, text: t("home.carefulProducts") as string },
-              { icon: Truck, text: t("home.fastDelivery") as string },
-              { icon: Shield, text: t("home.securePayment") as string },
+              { icon: Package, titleKey: "home.whyUsCard1Title" as const, subtextKey: "trust.guaranteeShort" as const, iconBg: "bg-amber-100 border-amber-200", iconColor: "text-amber-600" },
+              { icon: Truck, titleKey: "home.whyUsCard2Title" as const, subtextKey: "trust.fastDelivery" as const, iconBg: "bg-sky-100 border-sky-200", iconColor: "text-sky-600" },
+              { icon: Shield, titleKey: "home.whyUsCard3Title" as const, subtextKey: "trust.securePayment" as const, iconBg: "bg-emerald-100 border-emerald-200", iconColor: "text-emerald-600" },
             ].map((item, index) => {
               const Icon = item.icon
               return (
@@ -222,31 +244,28 @@ export default function Home() {
                   <motion.div
                     className="text-center rounded-2xl border border-border bg-card p-8 shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/20"
                     whileHover={{ y: -6 }}
+                    aria-label={t(item.titleKey) as string}
                   >
                     <motion.div
-                      className="bg-primary/10 rounded-2xl w-16 h-16 flex items-center justify-center mx-auto mb-5 border border-primary/20"
+                      className={`rounded-2xl w-16 h-16 flex items-center justify-center mx-auto mb-5 border ${item.iconBg}`}
                       whileHover={{ scale: 1.08 }}
                       transition={{ type: "spring", stiffness: 300 }}
                     >
-                      <Icon className="h-8 w-8 text-primary" />
+                      <Icon className={`h-8 w-8 ${item.iconColor}`} aria-hidden />
                     </motion.div>
-                    <h3 className="font-bold text-lg text-foreground">{item.text}</h3>
+                    <h3 className="font-bold text-lg text-foreground">{t(item.titleKey) as string}</h3>
+                    <p className="mt-2 text-sm text-muted-foreground">{t(item.subtextKey) as string}</p>
                   </motion.div>
                 </ScrollReveal>
               )
             })}
           </div>
-          <ScrollReveal direction="fade" delay={0.4}>
-            <div className="mt-14 max-w-3xl mx-auto">
-              <TrustBadges variant="row" />
-            </div>
-          </ScrollReveal>
         </div>
       </section>
 
       {/* Avis clients — carrousel qui défile */}
-      <section className="py-14 sm:py-20 lg:py-24 bg-muted">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+      <section id="avis" className="py-14 sm:py-20 lg:py-24 bg-muted scroll-mt-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
           <ReviewsCarousel />
         </div>
       </section>
@@ -259,36 +278,36 @@ export default function Home() {
       </section>
 
       {/* Autres couleurs */}
-      <section className="py-14 sm:py-20 lg:py-24 bg-muted">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-10 sm:py-20 lg:py-24 bg-muted">
+        <div className="container mx-auto px-3 sm:px-6 lg:px-8">
           <ScrollReveal direction="up" delay={0.1}>
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold tracking-tight mb-2">{t("home.similarProducts") as string}</h2>
-              <div className="w-14 h-1 bg-primary rounded-full mx-auto mb-4" />
-              <p className="text-muted-foreground max-w-md mx-auto">
+            <div className="text-center mb-8 sm:mb-12">
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">{t("home.similarProducts") as string}</h2>
+              <div className="w-14 h-1 bg-primary rounded-full mx-auto mb-3 sm:mb-4" />
+              <p className="text-sm text-muted-foreground max-w-md mx-auto mb-1.5 sm:mb-2">
                 {product.variants.length} couleurs disponibles
               </p>
             </div>
           </ScrollReveal>
-          <div className="flex flex-wrap justify-center gap-6">
+          <div className="grid grid-cols-1 sm:flex sm:flex-wrap sm:justify-center gap-4 sm:gap-6">
             {product.variants.map((v, index) => (
               <ScrollReveal key={v.id} direction="up" delay={0.15 + index * 0.05}>
-                <div className="w-full sm:w-[280px] lg:w-[260px]">
-                  <ProductCard product={product} variant={v} />
+                <div className="min-w-0 w-full sm:w-[280px] lg:w-[260px]">
+                  <ProductCard product={product} variant={v} className="w-full" />
                 </div>
               </ScrollReveal>
             ))}
           </div>
           <ScrollReveal direction="fade" delay={0.3}>
-            <p className="text-center mt-12">
+            <div className="text-center mt-8 sm:mt-12">
               <Link
                 href="/boutique"
-                className="inline-flex items-center gap-2 text-primary font-semibold hover:underline underline-offset-4 transition-colors duration-200"
+                className="inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-3 sm:min-h-0 sm:py-0 sm:px-0 text-primary font-semibold hover:underline underline-offset-4 transition-colors duration-200 rounded-lg border-2 border-primary/30 bg-primary/5 sm:border-0 sm:bg-transparent touch-manipulation"
               >
                 {t("home.viewShop") as string}
                 <ArrowRight className="h-4 w-4" />
               </Link>
-            </p>
+            </div>
           </ScrollReveal>
         </div>
       </section>

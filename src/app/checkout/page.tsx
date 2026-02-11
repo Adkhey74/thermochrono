@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button"
 import { PAYMENT_LOGOS } from "@/components/PaymentMethods"
 import { ChevronLeft, Loader2, Lock, Check, Package, Shield } from "lucide-react"
 import { loadShipping, hasValidShipping } from "@/lib/checkout-shipping"
+import { getShippingFee } from "@/lib/shipping"
 
 const CHECKOUT_DISCOUNT_KEY = "checkoutDiscount"
 
@@ -148,7 +149,9 @@ export default function CheckoutPage() {
     .filter(Boolean) as { productId: string; variantId: string; name: string; price: number; quantity: number; image: string }[]
 
   const subtotal = totalPrice()
-  const total = Math.max(0.01, subtotal - discountAmount)
+  const orderAmount = subtotal - discountAmount
+  const shippingFee = getShippingFee(orderAmount)
+  const total = Math.max(0.01, orderAmount + shippingFee)
   const profileId = process.env.NEXT_PUBLIC_MOLLIE_PROFILE_ID?.trim() ?? ""
   const profileIdLooksWrong = profileId.length > 0 && !profileId.startsWith("pfl_")
 
@@ -535,6 +538,17 @@ export default function CheckoutPage() {
                         <span className="tabular-nums">−{discountAmount.toFixed(2)} €</span>
                       </div>
                     )}
+                    {shippingFee > 0 ? (
+                      <div className="flex justify-between text-sm text-neutral-600">
+                        <span>{t("cart.shippingFee") as string}</span>
+                        <span className="tabular-nums">{shippingFee.toFixed(2)} €</span>
+                      </div>
+                    ) : (
+                      <div className="flex justify-between text-sm text-green-600">
+                        <span>{t("cart.freeShippingFrom") as string}</span>
+                        <span className="tabular-nums">0,00 €</span>
+                      </div>
+                    )}
                     <div className="flex justify-between text-sm font-semibold text-neutral-900 pt-2">
                       <span>{t("cart.total") as string}</span>
                       <span className="tabular-nums text-base">{total.toFixed(2)} €</span>
@@ -657,9 +671,14 @@ export default function CheckoutPage() {
                       <Button
                         type="submit"
                         size="lg"
-                        className="mt-6 w-full min-h-[52px] bg-black hover:bg-neutral-800 active:bg-neutral-900 text-white font-semibold rounded-lg text-[15px] touch-manipulation"
+                        className="mt-6 w-full min-h-[52px] bg-black hover:bg-neutral-800 active:bg-neutral-900 text-white font-semibold rounded-lg text-[15px] touch-manipulation inline-flex items-center justify-center gap-2"
                         disabled={payLoading || !profileId || !scriptReady}
                       >
+                        {payLoading ? (
+                          <Loader2 className="h-5 w-5 shrink-0 animate-spin" aria-hidden />
+                        ) : (
+                          <Lock className="h-5 w-5 shrink-0" aria-hidden />
+                        )}
                         {payLoading ? (t("checkout.paying") as string) : (t("checkout.payButton") as string)}
                       </Button>
 

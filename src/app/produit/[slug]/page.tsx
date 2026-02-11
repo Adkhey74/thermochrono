@@ -75,9 +75,25 @@ export default function ProductPage({ params }: PageProps) {
                 {!product.slug.startsWith("stickers-") && display.color && (
                   <p className="mt-2 text-muted-foreground font-medium">{display.color}</p>
                 )}
-                <p className="mt-4 text-2xl sm:text-3xl font-bold text-foreground">
-                  {selectedVariant.price.toFixed(2)} €
-                </p>
+                <div className="mt-4">
+                {selectedVariant.compareAtPrice != null && selectedVariant.compareAtPrice > selectedVariant.price ? (
+                  <div className="inline-flex flex-col gap-0.5">
+                    <span className="text-lg text-muted-foreground line-through">
+                      {selectedVariant.compareAtPrice.toFixed(2)} €
+                    </span>
+                    <span className="text-2xl sm:text-3xl font-bold text-red-600">
+                      {selectedVariant.price.toFixed(2)} €
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {(t("product.saveAmount") as string)} {(selectedVariant.compareAtPrice - selectedVariant.price).toFixed(2)} €
+                    </span>
+                  </div>
+                ) : (
+                  <p className="text-2xl sm:text-3xl font-bold text-foreground">
+                    {selectedVariant.price.toFixed(2)} €
+                  </p>
+                )}
+              </div>
               </section>
 
               {product.variants.length > 1 && (

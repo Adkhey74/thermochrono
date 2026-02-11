@@ -59,7 +59,16 @@ export function ProductCard({ product, variant: variantProp, className }: Produc
         <div className="flex flex-col flex-1 min-h-0 px-6 pt-4 pb-3">
           <CardHeader className="p-0 pb-2 transition-colors duration-200 group-hover:text-foreground">
             <h3 className="font-semibold leading-tight line-clamp-2 group-hover:text-primary transition-colors duration-200">{display.name}</h3>
-            <p className="text-lg font-semibold text-primary">{variant.price.toFixed(2)} €</p>
+            <div className="flex flex-col gap-0.5">
+              {variant.compareAtPrice != null && variant.compareAtPrice > variant.price ? (
+                <>
+                  <span className="text-sm text-muted-foreground line-through">{variant.compareAtPrice.toFixed(2)} €</span>
+                  <span className="text-lg font-semibold text-red-600">{variant.price.toFixed(2)} €</span>
+                </>
+              ) : (
+                <p className="text-lg font-semibold text-foreground">{variant.price.toFixed(2)} €</p>
+              )}
+            </div>
           </CardHeader>
           <CardContent className="p-0 pt-4 mt-auto">
             <Button className="w-full min-h-[48px] touch-manipulation transition-all duration-200 hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98] shadow-sm group-hover:shadow-md">
