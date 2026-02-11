@@ -48,7 +48,7 @@ export default function Home() {
           <div className="flex-1 flex flex-col items-center justify-center min-h-0 py-1">
             <div className="max-w-3xl mx-auto text-center w-full flex flex-col items-center justify-center">
             <motion.span
-              className="inline-flex items-center gap-1.5 rounded-full border border-white/40 bg-white/15 px-2.5 py-1 text-[10px] sm:text-sm font-semibold text-white backdrop-blur-md mb-1 sm:mb-8 shadow-lg shrink-0"
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/40 bg-white/15 px-2.5 py-1 text-xs sm:text-sm font-semibold text-white backdrop-blur-md mb-1 sm:mb-8 shadow-lg shrink-0"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
@@ -58,7 +58,7 @@ export default function Home() {
               {t("home.badgeBrand") as string}
             </motion.span>
             <motion.h1
-              className="text-lg sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight tracking-tight text-white mb-0.5 sm:mb-5 break-words [text-shadow:_0_2px_24px_rgb(0_0_0_/_60%)] line-clamp-3 sm:line-clamp-none"
+              className="text-xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight tracking-tight text-white mb-0.5 sm:mb-5 break-words [text-shadow:_0_2px_24px_rgb(0_0_0_/_60%)] line-clamp-3 sm:line-clamp-none"
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.15 }}
@@ -66,7 +66,7 @@ export default function Home() {
               {t("home.title") as string}
             </motion.h1>
             <motion.p
-              className="text-xs sm:text-2xl lg:text-3xl text-white/95 font-medium mb-0.5 sm:mb-1 [text-shadow:_0_1px_12px_rgb(0_0_0_/_50%)] line-clamp-2 sm:line-clamp-none"
+              className="text-sm sm:text-2xl lg:text-3xl text-white/95 font-medium mb-0.5 sm:mb-1 [text-shadow:_0_1px_12px_rgb(0_0_0_/_50%)] line-clamp-2 sm:line-clamp-none"
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
@@ -74,7 +74,7 @@ export default function Home() {
               {t("home.subtitle") as string}
             </motion.p>
             <motion.p
-              className="text-[10px] sm:text-xl text-white/90 mb-1.5 sm:mb-10 [text-shadow:_0_1px_10px_rgb(0_0_0_/_50%)] line-clamp-1 sm:line-clamp-none"
+              className="text-xs sm:text-xl text-white/90 mb-1.5 sm:mb-10 [text-shadow:_0_1px_10px_rgb(0_0_0_/_50%)] line-clamp-1 sm:line-clamp-none"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
@@ -93,7 +93,7 @@ export default function Home() {
                 <Button
                   asChild
                   size="lg"
-                  className="bg-white text-black hover:bg-white/95 min-h-[36px] h-9 px-3 text-[11px] sm:min-h-[48px] sm:h-12 sm:px-8 sm:text-base font-semibold rounded-lg sm:rounded-xl shadow-2xl shadow-black/30 gap-1 sm:gap-2 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.5)] touch-manipulation active:scale-[0.98]"
+                  className="bg-white text-black hover:bg-white/95 min-h-[36px] h-9 px-3 text-xs sm:min-h-[48px] sm:h-12 sm:px-8 sm:text-base font-semibold rounded-lg sm:rounded-xl shadow-2xl shadow-black/30 gap-1 sm:gap-2 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.5)] touch-manipulation active:scale-[0.98]"
                 >
                   <Link href={`/produit/${product.slug}`}>
                     {t("home.viewProduct") as string}
@@ -103,7 +103,7 @@ export default function Home() {
                 <Button
                   asChild
                   size="lg"
-                  className="min-h-[36px] h-9 px-3 text-[11px] sm:min-h-[48px] sm:h-12 sm:px-6 sm:text-base rounded-lg sm:rounded-xl border-2 border-white/90 bg-white/15 text-white hover:bg-white/25 hover:border-white hover:text-white backdrop-blur-md transition-all duration-300 font-semibold shadow-lg hover:scale-[1.02] gap-1 sm:gap-2 touch-manipulation active:scale-[0.98]"
+                  className="min-h-[36px] h-9 px-3 text-xs sm:min-h-[48px] sm:h-12 sm:px-6 sm:text-base rounded-lg sm:rounded-xl border-2 border-white/90 bg-white/15 text-white hover:bg-white/25 hover:border-white hover:text-white backdrop-blur-md transition-all duration-300 font-semibold shadow-lg hover:scale-[1.02] gap-1 sm:gap-2 touch-manipulation active:scale-[0.98]"
                 >
                   <Link href="/panier" className="inline-flex items-center gap-1 sm:gap-2">
                     <ShoppingCart className="h-3 w-3 sm:h-5 sm:w-5" />
@@ -179,7 +179,7 @@ export default function Home() {
               ].map(({ Icon, label, color }, i) => (
                 <span
                   key={i}
-                  className={`inline-flex items-center justify-center gap-2 rounded-full px-3 py-2.5 sm:px-4 text-sm font-medium text-center ${color}`}
+                  className={`inline-flex items-center justify-center gap-2 rounded-full px-3 py-2.5 sm:px-4 text-base sm:text-sm font-medium text-center ${color}`}
                 >
                   <Icon className="h-4 w-4 shrink-0" aria-hidden />
                   {label}
