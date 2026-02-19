@@ -73,11 +73,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-MRSN3SD8');`
 
+  const gtagScript = `
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HPF693PQZ6');
+  `
+
   return (
     <html lang="fr">
       <head>
         {/* Google Tag Manager — chargé en premier dans le head */}
         <script dangerouslySetInnerHTML={{ __html: gtmScript }} />
+        {/* Google tag (gtag.js) — une seule balise par site */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-HPF693PQZ6" />
+        <script dangerouslySetInnerHTML={{ __html: gtagScript }} />
         <StructuredData />
       </head>
       <body
